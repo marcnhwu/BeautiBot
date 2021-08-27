@@ -26,22 +26,30 @@ def getResult(inputSTR, utterance, args, resultDICT):
     debugInfo(inputSTR, utterance)
     if utterance == "不好":
         if len(inputSTR) < 3:
-            resultDICT["confirm"] = False   
+            resultDICT["confirm"] = False
+            resultDICT["bodypart"] = None
+            resultDICT["request"] = None
         pass
 
     if utterance == "不是":
         if len(inputSTR) < 3:
-            resultDICT["confirm"] = False     
+            resultDICT["confirm"] = False
+            resultDICT["bodypart"] = None
+            resultDICT["request"] = None            
         pass
 
     if utterance == "好":
         if len(inputSTR) < 2:
             resultDICT["confirm"] = True  
+            resultDICT["bodypart"] = None
+            resultDICT["request"] = None            
         pass
 
     if utterance == "是":
         if len(inputSTR) < 2:
-            resultDICT["confirm"] = True  
+            resultDICT["confirm"] = True 
+            resultDICT["bodypart"] = None
+            resultDICT["request"] = None            
         pass
 
     return resultDICT
