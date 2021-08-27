@@ -231,11 +231,11 @@ def Result(inputSTR, intentLIST=[]):
     resultDICT = runLoki(inputLIST, filterLIST)
     print("Loki Result => {}".format(resultDICT))
     
-    #get the full bodypart name
-    #for full, short in expandDICT.items():
-        #if resultDICT["bodypart"] in short:
-            #resultDICT["bodypart"] = full
-    #print(resultDICT["bodypart"])
+    # get the full bodypart name
+    for full, short in expandDICT.items():
+        if resultDICT["bodypart"] in short:
+            resultDICT["bodypart"] = full
+    print(resultDICT["bodypart"])
             
     if "msg" in resultDICT.keys() and resultDICT["msg"] == "No Match Intent!":
         return False
@@ -245,5 +245,5 @@ def Result(inputSTR, intentLIST=[]):
 
     
 if __name__ == "__main__":
-    inputSTR = "好，我要除腿毛"
+    inputSTR = "好，我要除腋毛"
     print(Result(inputSTR))
