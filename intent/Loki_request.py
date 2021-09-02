@@ -25,87 +25,91 @@ def debugInfo(inputSTR, utterance):
 def getResult(inputSTR, utterance, args, resultDICT):
     debugInfo(inputSTR, utterance)
     if utterance == "[我]想要除[腿]":
-        if args[1] == "毛":
-            pass
+        if "毛" in inputSTR:
+            resultDICT["bodypart"] = ""
+            resultDICT["request"] = True
+            resultDICT["confirm"] = ""
         else:
             resultDICT["bodypart"] = args[1]
             resultDICT["request"] = True
-            resultDICT["confirm"] = None
+            resultDICT["confirm"] = ""
         pass
 
     if utterance == "[我]想要除[腿][上]的毛":
         resultDICT["bodypart"] = args[1]
         resultDICT["request"] = True
-        resultDICT["confirm"] = None
+        resultDICT["confirm"] = ""
         pass
 
     if utterance == "[我]想要除[腿]毛":
         resultDICT["bodypart"] = args[1]
         resultDICT["request"] = True    
-        resultDICT["confirm"] = None
+        resultDICT["confirm"] = ""
         pass
 
     if utterance == "[我]想除[腿]":
-        if args[1] == "毛":
-            pass
+        if "毛" in inputSTR:
+            resultDICT["bodypart"] = ""
+            resultDICT["request"] = True
+            resultDICT["confirm"] = ""
         else:
             resultDICT["bodypart"] = args[1]
             resultDICT["request"] = True
-            resultDICT["confirm"] = None
-        pass
+            resultDICT["confirm"] = ""
 
     if utterance == "[我]想除[腿][上]的毛":
         resultDICT["bodypart"] = args[1]
         resultDICT["request"] = True 
-        resultDICT["confirm"] = None
+        resultDICT["confirm"] = ""
         pass
 
     if utterance == "[我]想除[腿]毛":
         resultDICT["bodypart"] = args[1]
         resultDICT["request"] = True
-        resultDICT["confirm"] = None
+        resultDICT["confirm"] = ""
         pass
 
     if utterance == "[我]想除毛":
-        resultDICT["bodypart"] = None
-        resultDICT["request"] = True
-        resultDICT["confirm"] = None
+        if "毛" in inputSTR:
+            resultDICT["bodypart"] = ""
+            resultDICT["request"] = True
+            resultDICT["confirm"] = ""
         pass
 
     if utterance == "[腿]毛太長了想除[腿]毛":
         resultDICT["bodypart"] = args[0]
         resultDICT["request"] = True  
-        resultDICT["confirm"] = None
+        resultDICT["confirm"] = ""
         pass
 
     if utterance == "[腿]毛太長了想除毛":
         resultDICT["bodypart"] = args[0]
         resultDICT["request"] = True 
-        resultDICT["confirm"] = None
+        resultDICT["confirm"] = ""
         pass
 
     if utterance == "[腿]毛好長想除[腿]毛":
         resultDICT["bodypart"] = args[0]
         resultDICT["request"] = True 
-        resultDICT["confirm"] = None
+        resultDICT["confirm"] = ""
         pass
 
     if utterance == "[腿]毛好長想除毛":
         resultDICT["bodypart"] = args[0]
         resultDICT["request"] = True  
-        resultDICT["confirm"] = None
+        resultDICT["confirm"] = ""
         pass
 
     if utterance == "想除[腿]毛[我][腿]毛太長了":
         resultDICT["bodypart"] = args[0]
         resultDICT["request"] = True  
-        resultDICT["confirm"] = None
+        resultDICT["confirm"] = ""
         pass
 
     if utterance == "想除[腿]毛[我][腿]毛好長":
         resultDICT["bodypart"] = args[0]
         resultDICT["request"] = True 
-        resultDICT["confirm"] = None
+        resultDICT["confirm"] = ""
         pass
 
     return resultDICT

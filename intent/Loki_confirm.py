@@ -27,29 +27,25 @@ def getResult(inputSTR, utterance, args, resultDICT):
     if utterance == "不好":
         if len(inputSTR) < 3:
             resultDICT["confirm"] = False
-            resultDICT["bodypart"] = None
-            resultDICT["request"] = None
+            #resultDICT["yesOrNo"] = False
         pass
 
     if utterance == "不是":
         if len(inputSTR) < 3:
-            resultDICT["confirm"] = False
-            resultDICT["bodypart"] = None
-            resultDICT["request"] = None            
+            resultDICT["confirm"] = False 
+            #resultDICT["yesOrNo"] = False
         pass
 
     if utterance == "好":
         if len(inputSTR) < 2:
-            resultDICT["confirm"] = True  
-            resultDICT["bodypart"] = None
-            resultDICT["request"] = None            
+            resultDICT["confirm"] = True
+            #resultDICT["yesOrNo"] = True
         pass
 
     if utterance == "是":
         if len(inputSTR) < 2:
-            resultDICT["confirm"] = True 
-            resultDICT["bodypart"] = None
-            resultDICT["request"] = None            
+            resultDICT["confirm"] = True   
+            #resultDICT["yesOrNo"] = True
         pass
 
     return resultDICT
