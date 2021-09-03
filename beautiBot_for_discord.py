@@ -174,7 +174,7 @@ async def on_message(message):
             # input == "我腿毛好長"
             # 第一輪的回覆
             elif mscDICT[client.user.id]["request"] == "" and mscDICT[client.user.id]["bodypart"] != "":
-                if mscDICT[client.user.id]["confirm"] == "" and mscDICT[client.user.id]["bodyQuestionSTR"] != "":  
+                if mscDICT[client.user.id]["confirm"] == "" and mscDICT[client.user.id]["bodyQuestionSTR"] == "":  
                     if mscDICT[client.user.id]["bodypart"] != "毛":
                         if mscDICT[client.user.id]["bodypart"] == "腿":   
                             replySTR = "大腿還是小腿呢？"
