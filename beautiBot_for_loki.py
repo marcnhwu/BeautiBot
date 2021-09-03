@@ -184,10 +184,11 @@ def runLoki(inputLIST, filterLIST=[]):
                 # confirm
                 if lokiRst.getIntent(index, resultIndex) == "confirm":
                     resultDICT = Loki_confirm.getResult(key, lokiRst.getUtterance(index, resultIndex), lokiRst.getArgs(index, resultIndex), resultDICT)
-
+            
                 # request
                 if lokiRst.getIntent(index, resultIndex) == "request":
                     resultDICT = Loki_request.getResult(key, lokiRst.getUtterance(index, resultIndex), lokiRst.getArgs(index, resultIndex), resultDICT)
+
 
     else:
         resultDICT = {"msg": lokiRst.getMessage()}
@@ -221,7 +222,7 @@ expandDICT = {"腋下": ["胳肢窩","腋"],
               }
 
 
-def Result(inputSTR, intentLIST=[]):
+def result(inputSTR, intentLIST=[]):
     punctuationPat = re.compile("[,\.\?:;，。？、：；\n]+")
     inputLIST = punctuationPat.sub("\n", inputSTR).split("\n") 
     print(inputLIST)
@@ -231,11 +232,13 @@ def Result(inputSTR, intentLIST=[]):
     resultDICT = runLoki(inputLIST, filterLIST)
     print("Loki Result => {}".format(resultDICT))
     
+
     # get the full bodypart name
-    for full, short in expandDICT.items():
-        if resultDICT["bodypart"] in short:
-            resultDICT["bodypart"] = full
-    print(resultDICT["bodypart"])
+    if "bodypart" in resultDICT.keys():
+        for full, short in expandDICT.items():
+            if resultDICT["bodypart"] in short:
+                resultDICT["bodypart"] = full
+                print(resultDICT["bodypart"])
             
     if "msg" in resultDICT.keys() and resultDICT["msg"] == "No Match Intent!":
         return False
@@ -246,4 +249,4 @@ def Result(inputSTR, intentLIST=[]):
     
 if __name__ == "__main__":
     inputSTR = "好，我要除腋毛"
-    print(Result(inputSTR))
+    print(result(inputSTR))
