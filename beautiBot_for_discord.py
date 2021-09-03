@@ -104,12 +104,9 @@ async def on_message(message):
                         if "大腿" in msgSTR:
                             mscDICT[client.user.id]["bodypart"] = "大腿"
                             mscDICT[client.user.id]["request"] == True # 因為會問「請問是大腿還是小腿呢？」，代表前提request要成立
-                            # 清空 User Dict
-                            mscDICT[client.user.id]["bodyQuestionSTR"] == ""  # 解決 bodyQuestion 後就刪掉
                         if "小腿" in msgSTR:
                             mscDICT[client.user.id]["bodypart"] = "小腿"
                             mscDICT[client.user.id]["request"] == True 
-                            mscDICT[client.user.id]["bodyQuestionSTR"] == ""
 
                     # 再處理「是非題」      
                     else:
@@ -129,8 +126,8 @@ async def on_message(message):
                     mscDICT[client.user.id]["confirm"] = lokiResultDICT["confirm"]
                 if k == "msg":
                     replySTR = lokiResultDICT[k]
-                #else:
-                    #replySTR = "你是要詢問療程相關的事情嗎？"
+                else:
+                    replySTR = "你是要詢問療程相關的事情嗎？"
                     
     except Exception as e:
         logging.error("[MSG lokiResultDICT ERROR] {}".format(str(e)))
@@ -139,15 +136,13 @@ async def on_message(message):
     # bot回覆
     try:
         if lokiResultDICT:
-        # input == "我想要除腿的毛"
-            # 在第二輪+的回覆
+            # input == "我想要除腿的毛"
+            # 第一輪和多輪的回覆
             if mscDICT[client.user.id]["request"] == True and mscDICT[client.user.id]["bodypart"] != "":
-                if mscDICT[client.user.id]["confirm"] == True and mscDICT[client.user.id]["bodyQuestionSTR"] == "":
-                    replySTR = "還有其他我們可以幫忙的地方嗎？"
-                    #mscDICT[client.user.id]["queryIntentSTR"] = "confirm"
-                elif mscDICT[client.user.id]["confirm"] == False and mscDICT[client.user.id]["bodyQuestionSTR"] == "":
-                    replySTR = "是不是有其他問題呢？" 
-                    
+                if mscDICT[client.user.id]["confirm"] == "" and mscDICT[client.user.id]["bodyQuestionSTR"] != "":
+                    replySTR = "那我就幫您安排{}的除毛療程囉，好不好？".format(mscDICT[client.user.id]["bodypart"])
+                    mscDICT[client.user.id]["queryIntentSTR"] = "confirm"
+
                 elif mscDICT[client.user.id]["confirm"] == "" and mscDICT[client.user.id]["bodyQuestionSTR"] == "":
                     if mscDICT[client.user.id]["bodypart"] == "腿":
                         replySTR = "請問是大腿還是小腿呢？"
@@ -179,7 +174,7 @@ async def on_message(message):
             # input == "我腿毛好長"
             # 第一輪的回覆
             elif mscDICT[client.user.id]["request"] == "" and mscDICT[client.user.id]["bodypart"] != "":
-                if mscDICT[client.user.id]["confirm"] == "" and mscDICT[client.user.id]["bodyQuestionSTR"] == "":  
+                if mscDICT[client.user.id]["confirm"] == "" and mscDICT[client.user.id]["bodyQuestionSTR"] != "":  
                     if mscDICT[client.user.id]["bodypart"] != "毛":
                         if mscDICT[client.user.id]["bodypart"] == "腿":   
                             replySTR = "大腿還是小腿呢？"
@@ -211,7 +206,7 @@ async def on_message(message):
             # input == "我想除毛" 
             # 第一輪的回覆
             elif mscDICT[client.user.id]["request"] == True and mscDICT[client.user.id]["bodypart"] == "":
-                if mscDICT[client.user.id]["confirm"] == "" and mscDICT[client.user.id]["bodyQuestionSTR"] == "":  
+                if mscDICT[client.user.id]["confirm"] == "" and mscDICT[client.user.id]["bodyQuestionSTR"] != "":  
                     replySTR = "請問想處理哪個部位呢？"
                     mscDICT[client.user.id]["queryIntentSTR"] = "bodypart"
                     mscDICT[client.user.id]["bodyQuestionSTR"] = replySTR
