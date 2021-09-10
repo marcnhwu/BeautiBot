@@ -19,6 +19,8 @@ client = discord.Client()
 
 mscDICT = {# "userID": {Template}
            }
+
+appointmentLIST = []
 # </取得多輪對話資訊>
 
 with open("account.info.py", encoding="utf-8") as f:
@@ -87,7 +89,8 @@ async def on_message(message):
                                            "confirm": "",
                                            "queryIntentSTR": "",
                                            "bodyQuestionSTR": "",
-                                           "updatetime": datetime.now()
+                                           "updatetime": datetime.now(),
+                                           "finish": ""
                                            } 
                 #logging.info(mscDICT)
             else: 
@@ -111,14 +114,39 @@ async def on_message(message):
                                     mscDICT[client.user.id]["request"] = True # 因為會問「請問是大腿還是小腿呢？」，代表前提request要成立
                                     mscDICT[client.user.id]["bodyQuestionSTR"] = None # 清除問題
 
-
                 # 再處理「是非題」      
                     else:
                         QlokiResultDICT = beautiBot(msgSTR, [mscDICT[client.user.id]["queryIntentSTR"]])
                         logging.info(QlokiResultDICT) 
                         
-                        if QlokiResultDICT["confirm"] != "":
+                        if QlokiResultDICT["confirm"] != True:
                             mscDICT[client.user.id]["confirm"] = QlokiResultDICT["confirm"]
+                            appointmentLIST.append(mscDICT[client.user.id])
+                            mscDICT[client.user.id] = {"bodypart": "",
+                                                       "request": "",
+                                                       "confirm": "",
+                                                       "queryIntentSTR": "",
+                                                       "bodyQuestionSTR": "",
+                                                       "updatetime": datetime.now(),
+                                                       "finish": ""
+                                                       } 
+                            logging.info(appointmentLIST)
+                            logging.info(QlokiResultDICT)
+                            
+                        elif QlokiResultDICT["confirm"] == True:
+                            mscDICT[client.user.id]["confirm"] = QlokiResultDICT["confirm"]
+                            # once confirm, save the current appointment into appointmentLIST
+                            appointmentLIST.append(mscDICT[client.user.id])
+                            mscDICT[client.user.id] = {"bodypart": "",
+                                                       "request": "",
+                                                       "confirm": "",
+                                                       "queryIntentSTR": "",
+                                                       "bodyQuestionSTR": "",
+                                                       "updatetime": datetime.now(),
+                                                       "finish": ""
+                                                       } 
+                            mscDICT[client.user.id]["finish"] = True
+                            logging.info(appointmentLIST)
                             logging.info(QlokiResultDICT)
                         else:
                             pass
@@ -130,7 +158,7 @@ async def on_message(message):
                     mscDICT[client.user.id]["bodypart"] = lokiResultDICT["bodypart"]
                 if k == "request" and mscDICT[client.user.id][k] != True:
                     mscDICT[client.user.id]["request"] = lokiResultDICT["request"]
-                if k == "confirm" and mscDICT[client.user.id][k] == "":
+                if k == "confirm" and lokiResultDICT["confirm"] == "":
                     mscDICT[client.user.id]["confirm"] = lokiResultDICT["confirm"]
                 if k == "msg":
                     replySTR = lokiResultDICT[k]
@@ -145,19 +173,20 @@ async def on_message(message):
     try:
         if lokiResultDICT:
             # 多輪的回覆
-            if mscDICT[client.user.id]["request"] == True and mscDICT[client.user.id]["bodypart"] != "":              # input == "我想要除腿的毛"
-                if mscDICT[client.user.id]["confirm"] == True and mscDICT[client.user.id]["bodyQuestionSTR"] == None:
-                    replySTR = "你還有沒有其他相關的疑問呢？"
-                elif mscDICT[client.user.id]["confirm"] == False and mscDICT[client.user.id]["bodyQuestionSTR"] == None:
-                    replySTR = "還是你有考慮其他療程呢？"                
- 
-                elif mscDICT[client.user.id]["confirm"] == "" and mscDICT[client.user.id]["bodyQuestionSTR"] == None:
+            if mscDICT[client.user.id]["request"] == "" and mscDICT[client.user.id]["bodypart"] == "":
+                if mscDICT[client.user.id]["confirm"] == "" and mscDICT[client.user.id]["finish"] == True and mscDICT[client.user.id]["bodyQuestionSTR"] == "":
+                    replySTR = "謝謝你使用BeautiBot！"
+                elif mscDICT[client.user.id]["confirm"] == "" and mscDICT[client.user.id]["finish"] == "" and mscDICT[client.user.id]["bodyQuestionSTR"] == "":
+                    replySTR = "你還有其他疑問嗎？"
+
+            # 第一輪的回覆
+            elif mscDICT[client.user.id]["request"] == True and mscDICT[client.user.id]["bodypart"] != "":          # input == "我想要除腿的毛"
+                if mscDICT[client.user.id]["confirm"] == "" and mscDICT[client.user.id]["bodyQuestionSTR"] == None:
                     replySTR = "OK啊，我就幫您安排{}的除毛療程囉，好不好？".format(mscDICT[client.user.id]["bodypart"])
                     mscDICT[client.user.id]["queryIntentSTR"] = "confirm"
-
-                # 第一輪的回覆
+                
                 elif mscDICT[client.user.id]["confirm"] == "" and mscDICT[client.user.id]["bodyQuestionSTR"] == "":
-                    if mscDICT[client.user.id]["bodypart"] not in [key for key in handleBodypartDICT.keys()]:    # 需要釐清的部位
+                    if mscDICT[client.user.id]["bodypart"] not in [key for key in handleBodypartDICT.keys()]:         # 需要釐清的部位
                         replySTR = "沒問題呀，我就幫您安排{}的除毛療程囉，好不好？".format(mscDICT[client.user.id]["bodypart"])
                         mscDICT[client.user.id]["queryIntentSTR"] = "confirm"  
                     else:
