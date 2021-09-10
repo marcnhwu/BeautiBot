@@ -95,14 +95,10 @@ async def on_message(message):
                 #logging.info(mscDICT)
             else: 
                 # 處理時間差
-                timeNew = datetime.now() # 取得當下時間
-                timeOld = mscDICT[client.user.id]["updatetime"] # 取得上一輪對話的時間
-                timeNewSTR = datetime.strptime(str(timeNew),"%Y-%m-%d %H:%M:%S.%f")
-                timeOldSTR = datetime.strptime(str(timeOld),"%Y-%m-%d %H:%M:%S.%f")
-                timeDIFF = (timeNewSTR - timeOldSTR).seconds # 以秒為單位
-                # 5 分鐘以內都算是舊對話
-                if timeDIFF <= 300:
-                    mscDICT[client.user.id]["updatetime"] = timeNew
+                datetimeNow = datetime.now()  # 取得當下時間
+                timeDIFF = datetimeNow - mscDICT[client.user.id]["updatetime"]
+                if timeDIFF.total_seconds() <= 300:    # 以秒為單位，5分鐘以內都算是舊對話
+                    mscDICT[client.user.id]["updatetime"] = datetimeNow
                     
                 # 先處理「簡答題」
                     if mscDICT[client.user.id]["bodyQuestionSTR"]:
