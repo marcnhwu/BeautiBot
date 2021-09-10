@@ -89,6 +89,7 @@ async def on_message(message):
                                            "confirm": "",
                                            "queryIntentSTR": "",
                                            "bodyQuestionSTR": "",
+                                           "therapyQuestionSTR": "",
                                            "updatetime": datetime.now(),
                                            "finish": ""
                                            } 
@@ -97,7 +98,7 @@ async def on_message(message):
                 # 處理時間差
                 datetimeNow = datetime.now()  # 取得當下時間
                 timeDIFF = datetimeNow - mscDICT[client.user.id]["updatetime"]
-                if timeDIFF.total_seconds() <= 300:    # 以秒為單位，5分鐘以內都算是舊對話
+                if timeDIFF.total_seconds() <= 30:    # 以秒為單位，5分鐘以內都算是舊對話
                     mscDICT[client.user.id]["updatetime"] = datetimeNow
                     
                 # 先處理「簡答題」
@@ -115,19 +116,50 @@ async def on_message(message):
                         QlokiResultDICT = beautiBot(msgSTR, [mscDICT[client.user.id]["queryIntentSTR"]])
                         logging.info(QlokiResultDICT) 
                         
-                        if QlokiResultDICT["confirm"] != True:
-                            mscDICT[client.user.id]["confirm"] = QlokiResultDICT["confirm"]
-                            appointmentLIST.append(mscDICT[client.user.id])
-                            mscDICT[client.user.id] = {"bodypart": "",
-                                                       "request": "",
-                                                       "confirm": "",
-                                                       "queryIntentSTR": "",
-                                                       "bodyQuestionSTR": "",
-                                                       "updatetime": datetime.now(),
-                                                       "finish": ""
-                                                       } 
-                            logging.info(appointmentLIST)
-                            logging.info(QlokiResultDICT)
+                        if QlokiResultDICT["confirm"] != True:                                   # inputSTR：沒有
+                            if mscDICT[client.user.id]["finish"] == None:                        # 已確認療程
+                                mscDICT[client.user.id]["confirm"] = True                        # Q:「你有其他跟療程相關的疑問嗎？」
+                                appointmentLIST.append(mscDICT[client.user.id])
+                                mscDICT[client.user.id] = {"bodypart": "",
+                                                           "request": "",
+                                                           "confirm": "",
+                                                           "queryIntentSTR": "",
+                                                           "bodyQuestionSTR": "",
+                                                           "therapyQuestionSTR": "",
+                                                           "updatetime": datetime.now(),
+                                                           "finish": True
+                                                           } 
+                                logging.info(appointmentLIST)
+                                logging.info(QlokiResultDICT)  
+                            elif mscDICT[client.user.id]["finish"] == "":
+                                if mscDICT[client.user.id]["confirm"] == None:                     # Q:「你是不是有其他疑問呢？」
+                                    appointmentLIST.append(mscDICT[client.user.id])
+                                    mscDICT[client.user.id] = {"bodypart": "",
+                                                               "request": "",
+                                                               "confirm": None,
+                                                               "queryIntentSTR": "",
+                                                               "bodyQuestionSTR": "",
+                                                               "therapyQuestionSTR": "",
+                                                               "updatetime": datetime.now(),
+                                                               "finish": "END"
+                                                               } 
+                                    logging.info(appointmentLIST)
+                                    logging.info(QlokiResultDICT)                              
+                                
+                                elif mscDICT[client.user.id]["confirm"] == "":
+                                    mscDICT[client.user.id]["confirm"] = QlokiResultDICT["confirm"]   # 如果確認問題得到相反的回答，清掉mscDICT重新開始
+                                    appointmentLIST.append(mscDICT[client.user.id])
+                                    mscDICT[client.user.id] = {"bodypart": "",
+                                                               "request": "",
+                                                               "confirm": None,
+                                                               "queryIntentSTR": "",
+                                                               "bodyQuestionSTR": "",
+                                                               "therapyQuestionSTR": "",
+                                                               "updatetime": datetime.now(),
+                                                               "finish": ""
+                                                               } 
+                                    logging.info(appointmentLIST)
+                                    logging.info(QlokiResultDICT)
                             
                         elif QlokiResultDICT["confirm"] == True:
                             mscDICT[client.user.id]["confirm"] = QlokiResultDICT["confirm"]
@@ -135,13 +167,13 @@ async def on_message(message):
                             appointmentLIST.append(mscDICT[client.user.id])
                             mscDICT[client.user.id] = {"bodypart": "",
                                                        "request": "",
-                                                       "confirm": "",
+                                                       "confirm": True,
                                                        "queryIntentSTR": "",
                                                        "bodyQuestionSTR": "",
+                                                       "therapyQuestionSTR": "",
                                                        "updatetime": datetime.now(),
-                                                       "finish": ""
+                                                       "finish": None
                                                        } 
-                            mscDICT[client.user.id]["finish"] = True
                             logging.info(appointmentLIST)
                             logging.info(QlokiResultDICT)
                         else:
@@ -172,8 +204,14 @@ async def on_message(message):
             if mscDICT[client.user.id]["request"] == "" and mscDICT[client.user.id]["bodypart"] == "":
                 if mscDICT[client.user.id]["confirm"] == "" and mscDICT[client.user.id]["finish"] == True and mscDICT[client.user.id]["bodyQuestionSTR"] == "":
                     replySTR = "謝謝你使用BeautiBot！"
-                elif mscDICT[client.user.id]["confirm"] == "" and mscDICT[client.user.id]["finish"] == "" and mscDICT[client.user.id]["bodyQuestionSTR"] == "":
-                    replySTR = "你還有其他疑問嗎？"
+                elif mscDICT[client.user.id]["confirm"] == True and mscDICT[client.user.id]["finish"] == None and mscDICT[client.user.id]["bodyQuestionSTR"] == "":
+                    replySTR = "有沒有其他與療程相關的疑問呢？"
+                    mscDICT[client.user.id]["queryIntentSTR"] = "confirm"   
+                    
+                elif mscDICT[client.user.id]["confirm"] == None and mscDICT[client.user.id]["finish"] == "END" and mscDICT[client.user.id]["bodyQuestionSTR"] == "":
+                    replySTR = "謝謝你使用BeautiBot！"                
+                elif mscDICT[client.user.id]["confirm"] == None and mscDICT[client.user.id]["finish"] == "" and mscDICT[client.user.id]["bodyQuestionSTR"] == "":
+                    replySTR = "你有什麼其他的疑問呢？"
 
             # 第一輪的回覆
             elif mscDICT[client.user.id]["request"] == True and mscDICT[client.user.id]["bodypart"] != "":          # input == "我想要除腿的毛"
