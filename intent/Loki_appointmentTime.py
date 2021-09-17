@@ -60,7 +60,7 @@ def getResult(inputSTR, utterance, args, resultDICT):
     if utterance == "[我]想預約[星期一下午四點]":
         datetime = timeSTRConvert(args[1])["time"]
         #先處理中文日期
-        if datetime[0][0]["time_span"]["weekday"][0] == 7:
+        if datetime[0][0]["time_span"]["weekday"][0] == 7: #週日公休
             resultDICT['appointmentDay'] = False
         else:
             weekday = datetime[0][0]["datetime"][-19:-9] #抓articutAPI中time的日期 2021-09-13
@@ -81,7 +81,7 @@ def getResult(inputSTR, utterance, args, resultDICT):
         if datetime[0][0]["time_span"]["weekday"][0] == 7:
             resultDICT['appointmentDay'] = False
         else:
-            weekday = datetime[0][0]["datetime"][-19:-9] #抓articutAPI中time的日期 2021-09-13
+            weekday = datetime[0][0]["datetime"][-19:-9]
             resultDICT['appointmentDay'] = weekday
         #再判斷時間是否在營業時間內
         hour = int(datetime[0][0]["datetime"][-8:-6])
@@ -95,7 +95,12 @@ def getResult(inputSTR, utterance, args, resultDICT):
 
     if utterance == "[星期一][16]:[00]":
         datetime = timeSTRConvert(args[0])["time"]
-        
+        #先處理中文日期
+        if datetime[0][0]["time_span"]["weekday"][0] == 7:
+            resultDICT['appointmentDay'] = False
+        else:
+            weekday = datetime[0][0]["datetime"][-19:-9]
+            resultDICT['appointmentDay'] = weekday
         #再處理數字時間
         timeLIST = re.findall(r'[0-9]+:[0-9]+', inputSTR)
         timeSTR = "".join(timeLIST) #16:00
@@ -107,11 +112,5 @@ def getResult(inputSTR, utterance, args, resultDICT):
         else:
             resultDICT ['appointmentTime'] = False        
 
-        #先處理中文日期
-        if datetime[0][0]["time_span"]["weekday"][0] == 7:
-            resultDICT['appointmentDay'] = False
-        else:
-            weekday = datetime[0][0]["datetime"][-19:-9] #抓articutAPI中time的日期 2021-09-13
-            resultDICT['appointmentDay'] = weekday
 
     return resultDICT
