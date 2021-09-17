@@ -15,7 +15,7 @@
 """
 
 DEBUG_bodypart = True
-userDefinedDICT = {"bodyparts": ["毛", "腋", "腋下", "腿", "小腿", "大腿", "膝蓋", "腳", "腳趾", "腳背", "比基尼線", "私密處", "手", "手臂", "上手臂", "下手臂", "全手", "手指", "手背", "臉", "全臉", "鬍子", "眉心", "唇周", "下巴", "頸", "前頸", "後頸", "胸", "胸部", "腹", "腹部", "子母線", "背", "上背", "下背", "臀", "臀部", "乳暈"]}
+userDefinedDICT = {"bodypart": ["毛", "腋", "腋下", "腿", "小腿", "大腿", "膝蓋", "腳", "腳趾", "腳背", "比基尼線", "私密處", "手", "手臂", "上手臂", "下手臂", "全手", "手指", "手背", "臉", "全臉", "鬍子", "眉心", "唇周", "下巴", "頸", "前頸", "後頸", "胸", "胸部", "腹", "腹部", "子母線", "背", "上背", "下背", "臀", "臀部", "乳暈", "胳肢窩"], "location": ["忠孝敦化", "中山"], "doctorName": ["王經凱", "程昭瑞", "劉宇婷", "謝羽翔", "薛博駿", "陳棨揮"], "medicalCondition": ["藥物過敏", "凝血功能障礙", "蟹足腫", "免疫疾病", "糖尿病", "癲癇", "懷孕", "哺乳中", "抗生素"]}
 
     
 
@@ -26,9 +26,18 @@ def debugInfo(inputSTR, utterance):
 
 def getResult(inputSTR, utterance, args, resultDICT):
     debugInfo(inputSTR, utterance)
+    resultDICT = {"bodypart": "",
+                  "request": "",
+                  "confirm": None,
+                  "appointmentDoctor": "",
+                  "appointmentClinic": "",
+                  "medicalHistory": "",
+                  "appointmentTime": ""
+                  } 
+    
     if utterance == "[腿]":
-        if args[0] not in userDefinedDICT["bodyparts"]:
-            resultDICT["msg"] = "你是想跟我聊天嗎？"
+        if args[0] not in userDefinedDICT["bodypart"]:
+            pass
         else:
             resultDICT["bodypart"] = args[0]
             resultDICT["request"] = ""
@@ -77,6 +86,12 @@ def getResult(inputSTR, utterance, args, resultDICT):
         pass
 
     if utterance == "想除[腿]毛[腿]毛好長":
+        resultDICT["bodypart"] = args[0]
+        resultDICT["request"] = True
+        resultDICT["confirm"] = ""
+        pass
+
+    if utterance == "[腿][可以]嗎":
         resultDICT["bodypart"] = args[0]
         resultDICT["request"] = True
         resultDICT["confirm"] = ""
