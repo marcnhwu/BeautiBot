@@ -44,22 +44,30 @@
 
 from requests import post
 from requests import codes
-import re
 import math
 try:
+    from intent import Loki_appointmentClinic
     from intent import Loki_bodypart
     from intent import Loki_confirm
     from intent import Loki_request
+    from intent import Loki_appointmentTime
+    from intent import Loki_medicalHistory
+    from intent import Loki_appointmentDoctor
 except:
+    from .intent import Loki_appointmentClinic
     from .intent import Loki_bodypart
     from .intent import Loki_confirm
     from .intent import Loki_request
+    from .intent import Loki_appointmentTime
+    from .intent import Loki_medicalHistory
+    from .intent import Loki_appointmentDoctor
 
 
+import re
 import json
 with open("account.info.py", encoding="utf-8") as f:
     accountDICT = json.loads(f.read())
-        
+    
 LOKI_URL = "https://api.droidtown.co/Loki/BulkAPI/"
 USERNAME = accountDICT["username"]
 LOKI_KEY = accountDICT["loki_project_key"]
@@ -177,6 +185,14 @@ def runLoki(inputLIST, filterLIST=[]):
     if lokiRst.getStatus():
         for index, key in enumerate(inputLIST):
             for resultIndex in range(0, lokiRst.getLokiLen(index)):
+                # appointmentDoctor
+                if lokiRst.getIntent(index, resultIndex) == "appointmentDoctor":
+                    resultDICT = Loki_appointmentDoctor.getResult(key, lokiRst.getUtterance(index, resultIndex), lokiRst.getArgs(index, resultIndex), resultDICT)
+                
+                # appointmentClinic
+                if lokiRst.getIntent(index, resultIndex) == "appointmentClinic":
+                    resultDICT = Loki_appointmentClinic.getResult(key, lokiRst.getUtterance(index, resultIndex), lokiRst.getArgs(index, resultIndex), resultDICT)
+
                 # bodypart
                 if lokiRst.getIntent(index, resultIndex) == "bodypart":
                     resultDICT = Loki_bodypart.getResult(key, lokiRst.getUtterance(index, resultIndex), lokiRst.getArgs(index, resultIndex), resultDICT)
@@ -184,11 +200,18 @@ def runLoki(inputLIST, filterLIST=[]):
                 # confirm
                 if lokiRst.getIntent(index, resultIndex) == "confirm":
                     resultDICT = Loki_confirm.getResult(key, lokiRst.getUtterance(index, resultIndex), lokiRst.getArgs(index, resultIndex), resultDICT)
-            
+
                 # request
                 if lokiRst.getIntent(index, resultIndex) == "request":
                     resultDICT = Loki_request.getResult(key, lokiRst.getUtterance(index, resultIndex), lokiRst.getArgs(index, resultIndex), resultDICT)
 
+                # appointmentTime
+                if lokiRst.getIntent(index, resultIndex) == "appointmentTime":
+                    resultDICT = Loki_appointmentTime.getResult(key, lokiRst.getUtterance(index, resultIndex), lokiRst.getArgs(index, resultIndex), resultDICT)
+
+                # medicalHistory
+                if lokiRst.getIntent(index, resultIndex) == "medicalHistory":
+                    resultDICT = Loki_medicalHistory.getResult(key, lokiRst.getUtterance(index, resultIndex), lokiRst.getArgs(index, resultIndex), resultDICT)
 
     else:
         resultDICT = {"msg": lokiRst.getMessage()}
@@ -201,12 +224,12 @@ def testLoki(inputLIST, filterLIST):
 
 
 expandDICT = {"腋下": ["胳肢窩","腋"],
-              "比基尼線": ["該邊","該逼","胯下"],
-              "私密處": ["私處","三角地帶","妹妹","黑森林","恥","恥部","陰","陰部"],
+              "比基尼線修型": ["該邊","該逼","胯下","比基尼線","比基尼"],
+              "私密處全除": ["私密處","私處","三角地帶","妹妹","黑森林","恥","恥部","陰","陰部"],
               "上手臂": ["上臂"],
               "下手臂": ["前臂"],
               "全手": ["整隻手"],
-              "手背": ["手的背部","手的後面"],
+              "手指手背": ["手指","手指頭","指頭","手背","手的背部","手的後面"],
               "全臉": ["整張臉"],
               "髮際線": ["髮線"],
               "眉心唇周下巴": ["眉毛中間","眉毛中間的部分","眉毛中間的位置","兩眉之間","嘴唇附近","嘴唇周邊","嘴唇周圍","嘴巴附近","嘴巴周圍","嘴巴周邊","下顎"],
@@ -218,12 +241,16 @@ expandDICT = {"腋下": ["胳肢窩","腋"],
               "上背": ["上背部","背部上面","上面的背","上面的背部","背上方","背部上方"],
               "下背": ["下背部","背部下面","下面的背","下面的背部","背下方","背部下方"],
               "臀部": ["屁股","屁屁","屁"],
-              "乳暈": ["乳頭周圍","奶頭周圍","乳頭的周圍","奶頭的周圍","乳頭附近","奶頭附近","乳頭的附近","奶頭的附近","乳頭周邊","奶頭周邊","乳頭的周邊","奶頭的周邊"]
+              "乳暈": ["乳頭周圍","奶頭周圍","乳頭的周圍","奶頭的周圍","乳頭附近","奶頭附近","乳頭的附近","奶頭的附近","乳頭周邊","奶頭周邊","乳頭的周邊","奶頭的周邊"],
+              "鼻子": ["鼻","鼻孔"],
+              "腳趾腳背": ["腳趾","腳背"],
+              "鬍子": ["男性鬍子","鬍鬚"],
+              "髮際線": ["髮際","髮線"]
               }
-
-
+    
+    
 def result(inputSTR, intentLIST=[]):
-    punctuationPat = re.compile("[,\.\?:;，。？、：；\n]+")
+    punctuationPat = re.compile("[,\.\?;，。？、；\n]+")
     inputLIST = punctuationPat.sub("\n", inputSTR).split("\n") 
     print(inputLIST)
     
@@ -231,8 +258,8 @@ def result(inputSTR, intentLIST=[]):
     
     resultDICT = runLoki(inputLIST, filterLIST)
     print("Loki Result => {}".format(resultDICT))
+        
     
-
     # get the full bodypart name
     if "bodypart" in resultDICT.keys():
         for full, short in expandDICT.items():
@@ -244,9 +271,8 @@ def result(inputSTR, intentLIST=[]):
         return False
     else:
         return resultDICT
-        
+            
 
-    
 if __name__ == "__main__":
-    inputSTR = "好，我要除腋毛"
+    inputSTR = "星期一20:00"
     print(result(inputSTR))
