@@ -11,6 +11,7 @@ from pprint import pprint
 from Loki import result as beautiBot
 from botREF import handleBodypartDICT
 from botREF import userDefinedDICT
+from botREF import doctorNameLIST
 
 logging.basicConfig(level=logging.INFO) 
 
@@ -81,7 +82,7 @@ async def on_message(message):
     try:
         if lokiResultDICT:
             if client.user.id not in mscDICT:    # 判斷 User 是否為第一輪對話
-                mscDICT[client.user.id] = {"bodypart": "",
+                mscDICT[client.user.id] = {"bodypart": None,
                                            "request": "",
                                            "confirm": "",
                                            "queryIntentSTR": "",
@@ -105,40 +106,40 @@ async def on_message(message):
                     
                 # 先處理「簡答題」
                     #醫療史
-                    if mscDICT[client.user.id]["appointmentQuestionSTR"] == "請問你有沒有以下病史或情況呢？\n【藥物過敏、凝血功能障礙、蟹足腫、免疫疾病、糖尿病、癲癇、懷孕、哺乳中、抗生素】":
+                    if mscDICT[client.user.id]["appointmentQuestionSTR"] == "medicalHistory":
                         if msgSTR in ["沒","沒有"]:
                             mscDICT[client.user.id]["medicalHistory"] = False
                         else:
-                            QlokiResultDICT = beautiBot(msgSTR, [mscDICT[client.user.id]["medicalHistory"]])
+                            QlokiResultDICT = beautiBot(msgSTR, [mscDICT[client.user.id]["appointmentQuestionSTR"]])
                             logging.info(QlokiResultDICT) 
-                            for v in userDefinedDICT["medicalCondition"]:
-                                if QlokiResultDICT["medicalHistory"] == v:
-                                    mscDICT[client.user.id]["medicalHistory"] = True
-                                else:
-                                    mscDICT[client.user.id]["medicalHistory"] = False #ideal
+                            #for v in userDefinedDICT["medicalCondition"]:
+                            if QlokiResultDICT["medicalHistory"] in userDefinedDICT["medicalCondition"]:
+                                mscDICT[client.user.id]["medicalHistory"] = True
+                            else:
+                                mscDICT[client.user.id]["medicalHistory"] = False #ideal
                     #醫師
                     elif mscDICT[client.user.id]["appointmentQuestionSTR"] == "appointmentDoctor":
-                        QlokiResultDICT = beautiBot(msgSTR, [mscDICT[client.user.id]["appointmentDoctor"]])
+                        QlokiResultDICT = beautiBot(msgSTR, [mscDICT[client.user.id]["appointmentQuestionSTR"]])
                         logging.info(QlokiResultDICT) 
-                        for v in userDefinedDICT["doctorName"]:
-                            if QlokiResultDICT["appointmentDoctor"] == v:
-                                mscDICT[client.user.id]["appointmentDoctor"] = v                        
-                            else:
-                                mscDICT[client.user.id]["appointmentDoctor"] = ""
-                                replySTR = "請重新選擇醫師～\n【王經凱醫師(男)｜程昭瑞醫師(男)｜謝羽翔醫師(男)｜薛博駿醫師(男)｜陳棨揮醫師(男)｜劉宇婷醫師(女)】"
+                        if QlokiResultDICT["appointmentDoctor"] in doctorNameLIST:
+                            mscDICT[client.user.id]["appointmentDoctor"] = QlokiResultDICT["appointmentDoctor"] 
+                            logging.info(mscDICT[client.user.id])
+                        else:
+                            mscDICT[client.user.id]["appointmentDoctor"] = ""
+                            logging.info(mscDICT[client.user.id])
+                            replySTR = "請重新選擇醫師～\n【王經凱醫師(男)｜程昭瑞醫師(男)｜謝羽翔醫師(男)｜薛博駿醫師(男)｜陳棨揮醫師(男)｜劉宇婷醫師(女)】"
                     #診所位置
                     elif mscDICT[client.user.id]["appointmentQuestionSTR"] == "appointmentClinic":
-                        QlokiResultDICT = beautiBot(msgSTR, [mscDICT[client.user.id]["appointmentClinic"]])
+                        QlokiResultDICT = beautiBot(msgSTR, [mscDICT[client.user.id]["appointmentQuestionSTR"]])
                         logging.info(QlokiResultDICT) 
-                        for v in userDefinedDICT["location"]:
-                            if QlokiResultDICT["appointmentClinic"] == v:
-                                mscDICT[client.user.id]["appointmentClinic"] = v
-                            else:
-                                mscDICT[client.user.id]["appointmentClinic"] = ""
-                                replySTR = "請重新選擇診所～\ｎ【忠孝敦化店｜中山店】"
+                        if QlokiResultDICT["appointmentClinic"] in userDefinedDICT["location"]:
+                            mscDICT[client.user.id]["appointmentClinic"] = QlokiResultDICT["appointmentClinic"]                         
+                        else:
+                            mscDICT[client.user.id]["appointmentClinic"] = ""
+                            replySTR = "請重新選擇診所～\ｎ【忠孝敦化店｜中山店】"
                     #預約時間
                     elif mscDICT[client.user.id]["appointmentQuestionSTR"] == "appointmentTime": 
-                        QlokiResultDICT = beautiBot(msgSTR, [mscDICT[client.user.id]["appointmentTime"]])
+                        QlokiResultDICT = beautiBot(msgSTR, [mscDICT[client.user.id]["appointmentQuestionSTR"]])
                         logging.info(QlokiResultDICT) 
                         if QlokiResultDICT["appointmentDay"] != False and QlokiResultDICT["appointmentTime"] != False:
                             mscDICT[client.user.id]["appointmentDay"] = QlokiResultDICT["appointmentDay"]
@@ -158,7 +159,7 @@ async def on_message(message):
                     elif mscDICT[client.user.id]["bodyQuestionSTR"]:
                         if mscDICT[client.user.id]["bodyQuestionSTR"] in list(["".join(value) for value in handleBodypartDICT.values()]):
                         #if mscDICT[client.user.id]["bodyQuestionSTR"] in ["請問是大腿還是小腿呢？","大腿還是小腿呢？","請問想處理哪個部位呢？"]:
-                            for v in userDefinedDICT["bodyparts"]:
+                            for v in userDefinedDICT["bodypart"]:
                                 if v in msgSTR:
                                     mscDICT[client.user.id]["bodypart"] = v
                                     mscDICT[client.user.id]["request"] = True # 因為會問「請問是大腿還是小腿呢？」，代表前提request要成立
@@ -190,16 +191,23 @@ async def on_message(message):
                         
                         # inputSTR是「有」 
                         elif QlokiResultDICT["confirm"] == True:
-                            # 問題是「有沒有其他與療程相關的疑問呢？」
-                            if mscDICT[client.user.id]["finish"] == None:
-                                mscDICT[client.user.id]["confirm"] = QlokiResultDICT["confirm"]
-                                logging.info(mscDICT[client.user.id])  
+                            # 問題是「確認預約單」
+                            if mscDICT[client.user.id]["request"] == True and mscDICT[client.user.id]["bodypart"] != None:
+                                if mscDICT[client.user.id]["confirm"] == True:
+                                    mscDICT[client.user.id]["finish"] = QlokiResultDICT["confirm"]
+                                        
+                                elif mscDICT[client.user.id]["confirm"] == "":
+                                    mscDICT[client.user.id]["confirm"] = QlokiResultDICT["confirm"]
+                                # 問題是「有沒有其他與療程相關的疑問呢？」
+                                #if mscDICT[client.user.id]["finish"] == None:
+                                    #mscDICT[client.user.id]["confirm"] = QlokiResultDICT["confirm"]
 
-                            # 問題是確定部位或是療程
-                            elif mscDICT[client.user.id]["finish"] == "":
-                                mscDICT[client.user.id]["confirm"] = QlokiResultDICT["confirm"]
-                                mscDICT[client.user.id]["finish"] = None                            
-                                logging.info(mscDICT[client.user.id])
+                                # 問題是確定部位或是療程
+                                #elif mscDICT[client.user.id]["finish"] == "":
+                                    #mscDICT[client.user.id]["finish"] = None 
+                            #elif mscDICT[client.user.id]["confirm"] == "":
+                                #mscDICT[client.user.id]["confirm"] = QlokiResultDICT["confirm"]
+                                
                         else:
                             pass
                         
@@ -225,93 +233,78 @@ async def on_message(message):
     try:
         if lokiResultDICT:
             # 多輪的回覆
-            if mscDICT[client.user.id]["request"] == True and mscDICT[client.user.id]["bodypart"] != "":
-                if mscDICT[client.user.id]["confirm"] == True and mscDICT[client.user.id]["finish"] == True:
-                    replySTR = "謝謝你使用BeautiBot！"
-                    # then, empty the old mscDICT
-                    mscDICT[client.user.id] = {"bodypart": "",
-                                               "request": "",
-                                               "confirm": "",
-                                               "queryIntentSTR": "",
-                                               "bodyQuestionSTR": "",
-                                               "appointmentQuestionSTR": "",
-                                               "appointmentClinic": "",
-                                               "appointmentDoctor": "",
-                                               "appointmentDay": "",
-                                               "appointmentTime": "",
-                                               "medicalHistory": "",
-                                               "updatetime": datetime.now(),
-                                               "finish": ""
-                                               }                     
-                    
+            if mscDICT[client.user.id]["request"] == True and mscDICT[client.user.id]["bodypart"] != None:
+                if mscDICT[client.user.id]["confirm"] == True:
+                    if mscDICT[client.user.id]["finish"] == None:
+                #把預約資訊存到 appointmentLIST
+                        appointmentLIST.append(mscDICT[client.user.id]) 
+                        replySTR = "謝謝你使用BeautiBot！如果有療程相關問題，可以繼續問我們的醫美小幫手QuestionBeauty喔！\n期待再為你服務～"
+                #清空 mscDICT
+                        mscDICT[client.user.id] = {"bodypart": None,
+                                                   "request": "",
+                                                   "confirm": "",
+                                                   "queryIntentSTR": "",
+                                                   "bodyQuestionSTR": "",
+                                                   "appointmentQuestionSTR": "",
+                                                   "appointmentClinic": "",
+                                                   "appointmentDoctor": "",
+                                                   "appointmentDay": "",
+                                                   "appointmentTime": "",
+                                                   "medicalHistory": "",
+                                                   "updatetime": datetime.now(),
+                                                   "finish": ""
+                                                   }                                        
+                    #else:
+                        #replySTR = "請問哪些資訊不正確呢？"                
+                
                 #確認療程後，詢問病史
-                elif mscDICT[client.user.id]["confirm"] == True and mscDICT[client.user.id]["finish"] == None:
-                    if mscDICT[client.user.id]["medicalHistory"] == "":
-                        replySTR = "請問你有沒有以下病史或情況呢？\n【藥物過敏、凝血功能障礙、蟹足腫、免疫疾病、糖尿病、癲癇、懷孕、哺乳中、抗生素】"
-                        mscDICT[client.user.id]["appointmentQuestionSTR"]  = replySTR
-                #病史不適合做療程
-                    elif mscDICT[client.user.id]["medicalHistory"] == True:
-                        replySTR = "這樣你可能不適合做這個療程耶，建議請先詢問你的醫生喔～"
-                        mscDICT[client.user.id]["appointmentQuestionSTR"] = "medicalHistory" 
-                #確認沒有病史後，詢問醫師
-                    elif mscDICT[client.user.id]["medicalHistory"] == False:
-                        replySTR = "你要預約哪位醫師呢？\n請選擇【王經凱醫師(男)、程昭瑞醫師(男)、謝羽翔醫師(男)、薛博駿醫師(男)、陳棨揮醫師(男)、劉宇婷醫師(女)】"
-                        mscDICT[client.user.id]["appointmentQuestionSTR"] = "appointmentDoctor"
-                        #確認醫師後，詢問預約哪間診所
-                        if mscDICT[client.user.id]["appointmentDoctor"] != "":
-                            replySTR = "你要預約哪間診所呢？請選擇\n【忠孝敦化店】或是【中山店】"
-                            mscDICT[client.user.id]["appointmentQuestionSTR"] = "appointmentClinic" 
-                        #確認診所後，詢問預約時段
-                            if mscDICT[client.user.id]["appointmentClinic"] != "":
-                                replySTR = "你要預約哪個時段呢？請選擇\n【星期一 12:30~17:00、18:00~20:30\n星期二 12:30~17:00、18:00~20:30\n星期三 14:00~17:00、18:00~20:30\n星期四 12:30~17:00、18:00~20:30\n星期五 12:30~17:00、18:00~20:30\n星期六 12:30~17:00、18:00~20:30\n(星期日為診所休息日)】"
-                                mscDICT[client.user.id]["appointmentQuestionSTR"] = "appointmentTime" 
-                        #確認時段後，收尾        
-                                if mscDICT[client.user.id]["appointmentDay"] != "" and mscDICT[client.user.id]["appointmentTime"] != "":
-                                    replySTR = """你預約的是：
-                                                  {} {}
-                                                  {}店的{}除毛療程
-                                                  由{}醫師看診
-                                                  
-                                                  請問這樣正確嗎？""".format(mscDICT[client.user.id]["appointmentDay"],
-                                                                              mscDICT[client.user.id]["appointmentTime"],
-                                                                              mscDICT[client.user.id]["appointmentClinic"],
-                                                                              mscDICT[client.user.id]["bodypart"],
-                                                                              mscDICT[client.user.id]["appointmentDoctor"],
-                                                                              )
-                                    mscDICT[client.user.id]["queryIntentSTR"] = "confirm"
-                                    if mscDICT[client.user.id]["confirm"] == True:
-                                        #把預約資訊存到 appointmentLIST
-                                        appointmentLIST.append(mscDICT[client.user.id]) 
-                                        replySTR = "謝謝你使用BeautiBot！如果有療程相關問題，可以繼續問我們的醫美小幫手QuestionBeauty喔！\n期待再為你服務～"
-                                        #清空 mscDICT
-                                        mscDICT[client.user.id] = {"bodypart": "",
-                                                                   "request": "",
-                                                                   "confirm": "",
-                                                                   "queryIntentSTR": "",
-                                                                   "bodyQuestionSTR": "",
-                                                                   "appointmentQuestionSTR": "",
-                                                                   "appointmentClinic": "",
-                                                                   "appointmentDoctor": "",
-                                                                   "appointmentDay": "",
-                                                                   "appointmentTime": "",
-                                                                   "medicalHistory": "",
-                                                                   "updatetime": datetime.now(),
-                                                                   "finish": ""
-                                                                   }                                         
-                                    else:
-                                        replySTR = "請問哪些資訊不正確呢？"
+                    elif mscDICT[client.user.id]["finish"] == "":
+                        if mscDICT[client.user.id]["medicalHistory"] == "":
+                            replySTR = "請問你有沒有以下病史或情況呢？\n【藥物過敏、凝血功能障礙、蟹足腫、免疫疾病、糖尿病、癲癇、懷孕、哺乳中、抗生素】"
+                            mscDICT[client.user.id]["appointmentQuestionSTR"] = "medicalHistory"
+                    #病史不適合做療程
+                        elif mscDICT[client.user.id]["medicalHistory"] == True:
+                            replySTR = "這樣你可能不適合做這個療程耶，建議請先詢問你的醫生喔～"
+                            #mscDICT[client.user.id]["appointmentQuestionSTR"] = "medicalHistory" 
+                    #確認沒有病史後，詢問醫師
+                        elif mscDICT[client.user.id]["medicalHistory"] == False:
+                            replySTR = "你要預約哪位醫師呢？\n請選擇【王經凱醫師(男)、程昭瑞醫師(男)、謝羽翔醫師(男)、薛博駿醫師(男)、陳棨揮醫師(男)、劉宇婷醫師(女)】"
+                            mscDICT[client.user.id]["appointmentQuestionSTR"] = "appointmentDoctor"
+                            #確認醫師後，詢問預約哪間診所
+                            if mscDICT[client.user.id]["appointmentDoctor"] != "":
+                                replySTR = "你要預約哪間診所呢？請選擇\n【忠孝敦化店】或是【中山店】"
+                                mscDICT[client.user.id]["appointmentQuestionSTR"] = "appointmentClinic" 
+                            #確認診所後，詢問預約時段
+                                if mscDICT[client.user.id]["appointmentClinic"] != "":
+                                    replySTR = "你要預約哪個時段呢？請選擇\n【星期一 12:30~17:00、18:00~20:30\n星期二 12:30~17:00、18:00~20:30\n星期三 14:00~17:00、18:00~20:30\n星期四 12:30~17:00、18:00~20:30\n星期五 12:30~17:00、18:00~20:30\n星期六 12:30~17:00、18:00~20:30\n(星期日為診所休息日)】"
+                                    mscDICT[client.user.id]["appointmentQuestionSTR"] = "appointmentTime" 
+                            #確認時段後，收尾        
+                                    if mscDICT[client.user.id]["appointmentDay"] != "" and mscDICT[client.user.id]["appointmentTime"] != "":
+                                        replySTR = """你預約的是：\n
+                                        {} {}\n
+                                        {}店 的 {}除毛療程
+                                        由{}醫師看診
                                         
-                                elif mscDICT[client.user.id]["appointmentDay"] == "" and mscDICT[client.user.id]["appointmentTime"] != "":
-                                    replySTR = "請重新選擇日期！\n【星期一12:30~17:00、18:00~20:30\n星期二 12:30~17:00、18:00~20:30\n星期三 14:00~17:00、18:00~20:30\n星期四 12:30~17:00、18:00~20:30\n星期五 12:30~17:00、18:00~20:30\n星期六 12:30~17:00、18:00~20:30\n(星期日為診所休息日)】"
-                                    mscDICT[client.user.id]["appointmentQuestionSTR"] = "appointmentTime" 
-                                elif mscDICT[client.user.id]["appointmentDay"] != "" and mscDICT[client.user.id]["appointmentTime"] == "":
-                                    replySTR = "請重新選擇看診時間！\n【星期一12:30~17:00、18:00~20:30\n星期二 12:30~17:00、18:00~20:30\n星期三 14:00~17:00、18:00~20:30\n星期四 12:30~17:00、18:00~20:30\n星期五 12:30~17:00、18:00~20:30\n星期六 12:30~17:00、18:00~20:30\n(星期日為診所休息日)】"   
-                                    mscDICT[client.user.id]["appointmentQuestionSTR"] = "appointmentTime" 
+                                        請問這樣正確嗎？""".format(mscDICT[client.user.id]["appointmentDay"],
+                                                                           mscDICT[client.user.id]["appointmentTime"],
+                                                                           mscDICT[client.user.id]["appointmentClinic"],
+                                                                           mscDICT[client.user.id]["bodypart"],
+                                                                           mscDICT[client.user.id]["appointmentDoctor"]
+                                                                           )
+                                        mscDICT[client.user.id]["queryIntentSTR"] = "confirm"
+                                        mscDICT[client.user.id]["finish"] = None
+    
+                                    elif mscDICT[client.user.id]["appointmentDay"] == "" and mscDICT[client.user.id]["appointmentTime"] != "":
+                                        replySTR = "請重新選擇日期！\n【星期一12:30~17:00、18:00~20:30\n星期二 12:30~17:00、18:00~20:30\n星期三 14:00~17:00、18:00~20:30\n星期四 12:30~17:00、18:00~20:30\n星期五 12:30~17:00、18:00~20:30\n星期六 12:30~17:00、18:00~20:30\n(星期日為診所休息日)】"
+                                        mscDICT[client.user.id]["appointmentQuestionSTR"] = "appointmentTime" 
+                                    elif mscDICT[client.user.id]["appointmentDay"] != "" and mscDICT[client.user.id]["appointmentTime"] == "":
+                                        replySTR = "請重新選擇看診時間！\n【星期一12:30~17:00、18:00~20:30\n星期二 12:30~17:00、18:00~20:30\n星期三 14:00~17:00、18:00~20:30\n星期四 12:30~17:00、18:00~20:30\n星期五 12:30~17:00、18:00~20:30\n星期六 12:30~17:00、18:00~20:30\n(星期日為診所休息日)】"   
+                                        mscDICT[client.user.id]["appointmentQuestionSTR"] = "appointmentTime" 
                     
                     
                 elif mscDICT[client.user.id]["confirm"] == False and mscDICT[client.user.id]["finish"] == "END":
                     replySTR = "謝謝你使用BeautiBot！" 
-                    mscDICT[client.user.id] = {"bodypart": "",
+                    mscDICT[client.user.id] = {"bodypart": None,
                                                "request": "",
                                                "confirm": "",
                                                "queryIntentSTR": "",
@@ -324,7 +317,7 @@ async def on_message(message):
                                                "medicalHistory": "",
                                                "updatetime": datetime.now(),
                                                "finish": ""
-                                               }                   
+                                               }                  
                 elif mscDICT[client.user.id]["confirm"] == False and mscDICT[client.user.id]["finish"] == "":
                     replySTR = "那你有什麼「毛」病？^_^"
 
@@ -375,15 +368,15 @@ async def on_message(message):
                             else:
                                 pass                        
 
-            elif mscDICT[client.user.id]["request"] == True and mscDICT[client.user.id]["bodypart"] == "":          # input == "我想除毛" 
+            elif mscDICT[client.user.id]["request"] == True and mscDICT[client.user.id]["bodypart"] == None:          # input == "我想除毛" 
                 if mscDICT[client.user.id]["confirm"] == "" and mscDICT[client.user.id]["bodyQuestionSTR"] == "":  
                     replySTR = "請問想處理哪個部位呢？"
                     mscDICT[client.user.id]["queryIntentSTR"] = "bodypart"
                     mscDICT[client.user.id]["bodyQuestionSTR"] = replySTR
                     
-            elif mscDICT[client.user.id]["request"] == "" and mscDICT[client.user.id]["bodypart"] == "" and mscDICT[client.user.id]["confirm"] == "":
+            elif mscDICT[client.user.id]["request"] == "" and mscDICT[client.user.id]["bodypart"] == None and mscDICT[client.user.id]["confirm"] == "":
                 replySTR = "我只能回答醫美相關問題喔～有沒有相關問題想問我呀？\n可以跟我說「我想除毛」或是「我的手毛好長，好煩惱」喔！"
-                mscDICT[client.user.id] = {"bodypart": "",
+                mscDICT[client.user.id] = {"bodypart": None,
                                            "request": "",
                                            "confirm": "",
                                            "queryIntentSTR": "",
@@ -396,10 +389,10 @@ async def on_message(message):
                                            "medicalHistory": "",
                                            "updatetime": datetime.now(),
                                            "finish": ""
-                                           }               
+                                           }              
         else:
             replySTR = "我只能回答醫美相關問題喔～有沒有相關問題想問我呀？\n可以跟我說「我想除毛」或是「我的手毛好長，好煩惱」喔！"
-            mscDICT[client.user.id] = {"bodypart": "",
+            mscDICT[client.user.id] = {"bodypart": None,
                                        "request": "",
                                        "confirm": "",
                                        "queryIntentSTR": "",
@@ -412,7 +405,7 @@ async def on_message(message):
                                        "medicalHistory": "",
                                        "updatetime": datetime.now(),
                                        "finish": ""
-                                       }            
+                                       }           
                                  
     except Exception as e:
         logging.error("[MSG scene ERROR] {}".format(str(e)))
