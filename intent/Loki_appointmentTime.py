@@ -15,24 +15,19 @@
 """
 
 DEBUG_appointmentTime = True
-userDefinedDICT = {"bodypart": ["毛", "腋", "腋下", "腿", "小腿", "大腿", "膝蓋", "腳", "腳趾", "腳背", "比基尼線", "私密處", "手", "手臂", "上手臂", "下手臂", "全手", "手指", "手背", "臉", "全臉", "鬍子", "眉心", "唇周", "下巴", "頸", "前頸", "後頸", "胸", "胸部", "腹", "腹部", "子母線", "背", "上背", "下背", "臀", "臀部", "乳暈", "胳肢窩"], "location": ["忠孝敦化", "中山"], "doctorName": ["王經凱", "程昭瑞", "劉宇婷", "謝羽翔", "薛博駿", "陳棨揮"], "medicalCondition": ["藥物過敏", "凝血功能障礙", "蟹足腫", "免疫疾病", "糖尿病", "癲癇", "懷孕", "哺乳中", "抗生素"]}
+userDefinedDICT = {"bodypart": ["毛", "腋", "腋下", "腿", "小腿", "大腿", "膝蓋", "腳", "腳趾", "腳背", "比基尼線", "私密處", "手", "手臂", "上手臂", "下手臂", "全手", "手指", "手背", "臉", "全臉", "鬍子", "眉心", "唇周", "下巴", "頸", "前頸", "後頸", "胸", "胸部", "腹", "腹部", "子母線", "背", "上背", "下背", "臀", "臀部", "乳暈", "胳肢窩"], "location": ["忠孝敦化", "中山"], "medicalCondition": ["藥物過敏", "凝血功能障礙", "蟹足腫", "免疫疾病", "糖尿病", "癲癇", "懷孕", "哺乳中", "抗生素"]}
 
-
-from ArticutAPI import ArticutAPI
-articut = ArticutAPI.Articut()
 import re
-#articut = Articut(username="nienhengwu@gmail.com", apikey="X1#CfW!S^1z%ncCakreZ^ys%j42@6BX")
-
-# 將符合句型的參數列表印出。這是 debug 或是開發用的。
-def debugInfo(inputSTR, utterance):
-    if DEBUG_appointmentTime:
-        print("[appointmentTime] {} ===> {}".format(inputSTR, utterance))
+import json
+from ArticutAPI import Articut
+with open("account.info.py", encoding="utf-8") as f:
+    accountDICT = json.loads(f.read())
+articut = Articut(username = accountDICT["username"], apikey = accountDICT["articut_api_key"])
 
 def timeSTRConvert(inputSTR):
     resultDICT = {}
     resultDICT = articut.parse(inputSTR, level="lv3")
     return resultDICT
-
 
 from datetime import datetime
 dt = datetime.now()
@@ -53,8 +48,13 @@ def time_check(hour, minute):
             return True
     else:
         return False
-    
 
+
+# 將符合句型的參數列表印出。這是 debug 或是開發用的。
+def debugInfo(inputSTR, utterance):
+    if DEBUG_appointmentTime:
+        print("[appointmentTime] {} ===> {}".format(inputSTR, utterance))
+        
 def getResult(inputSTR, utterance, args, resultDICT):
     debugInfo(inputSTR, utterance)
     if utterance == "[我]想預約[星期一下午四點]":
@@ -110,7 +110,83 @@ def getResult(inputSTR, utterance, args, resultDICT):
         if time_check(hour, minute):
             resultDICT ['appointmentTime'] = timeSTR
         else:
-            resultDICT ['appointmentTime'] = False        
+            resultDICT ['appointmentTime'] = False  
+        pass
 
 
+    if utterance == "[可以][星期一][16]:[00]嗎":
+        datetime = timeSTRConvert(args[1])["time"]
+        #先處理中文日期
+        if datetime[0][0]["time_span"]["weekday"][0] == 7:
+            resultDICT['appointmentDay'] = False
+        else:
+            weekday = datetime[0][0]["datetime"][-19:-9]
+            resultDICT['appointmentDay'] = weekday
+        #再處理數字時間
+        timeLIST = re.findall(r'[0-9]+:[0-9]+', inputSTR)
+        timeSTR = "".join(timeLIST) #16:00
+        #判斷時間是否在營業時間內 
+        hour = int(timeSTR.split(":")[0])
+        minute = int(timeSTR.split(":")[1])
+        if time_check(hour, minute):
+            resultDICT ['appointmentTime'] = timeSTR
+        else:
+            resultDICT ['appointmentTime'] = False   
+        pass
+    
+    
+    if utterance == "[可以][星期一下午四點]嗎":
+        datetime = timeSTRConvert(args[1])["time"]
+        #先處理中文日期
+        if datetime[0][0]["time_span"]["weekday"][0] == 7:
+            resultDICT['appointmentDay'] = False
+        else:
+            weekday = datetime[0][0]["datetime"][-19:-9]
+            resultDICT['appointmentDay'] = weekday
+        #再判斷時間是否在營業時間內
+        hour = int(datetime[0][0]["datetime"][-8:-6])
+        minute = int(datetime[0][0]["datetime"][-5:-3])
+        if time_check(hour, minute):
+            resultDICT ['appointmentTime'] = datetime[0][0]["datetime"][-8:-3]
+        else:
+            resultDICT ['appointmentTime'] = False
+        pass
+    
+    if utterance == "[星期一][16]:[00][可以]嗎":
+        datetime = timeSTRConvert(args[0])["time"]
+        #先處理中文日期
+        if datetime[0][0]["time_span"]["weekday"][0] == 7:
+            resultDICT['appointmentDay'] = False
+        else:
+            weekday = datetime[0][0]["datetime"][-19:-9]
+            resultDICT['appointmentDay'] = weekday
+        #再處理數字時間
+        timeLIST = re.findall(r'[0-9]+:[0-9]+', inputSTR)
+        timeSTR = "".join(timeLIST) #16:00
+        #判斷時間是否在營業時間內 
+        hour = int(timeSTR.split(":")[0])
+        minute = int(timeSTR.split(":")[1])
+        if time_check(hour, minute):
+            resultDICT ['appointmentTime'] = timeSTR
+        else:
+            resultDICT ['appointmentTime'] = False   
+        pass
+    
+    if utterance == "[星期一下午四點][可以]嗎":
+        datetime = timeSTRConvert(args[0])["time"]
+        #先處理中文日期
+        if datetime[0][0]["time_span"]["weekday"][0] == 7:
+            resultDICT['appointmentDay'] = False
+        else:
+            weekday = datetime[0][0]["datetime"][-19:-9]
+            resultDICT['appointmentDay'] = weekday
+        #再判斷時間是否在營業時間內
+        hour = int(datetime[0][0]["datetime"][-8:-6])
+        minute = int(datetime[0][0]["datetime"][-5:-3])
+        if time_check(hour, minute):
+            resultDICT ['appointmentTime'] = datetime[0][0]["datetime"][-8:-3]
+        else:
+            resultDICT ['appointmentTime'] = False
+        pass
+                
     return resultDICT

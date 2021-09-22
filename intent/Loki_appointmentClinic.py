@@ -42,22 +42,57 @@ def getResult(inputSTR, utterance, args, resultDICT):
         pass
 
     if utterance == "[我]想預約[忠孝敦化]店":
-        if "店" in inputSTR:
+        if "預約" in inputSTR:
             resultDICT["appointmentClinic"] = args[1]
         pass
 
     if utterance == "[我]要[忠孝敦化]":
-        resultDICT["appointmentClinic"] = args[1]
+        if "要" in inputSTR:
+            resultDICT["appointmentClinic"] = args[1]
         pass
 
     if utterance == "[我]要[忠孝敦化]店":
-        if "店" in inputSTR:
+        if "要" in inputSTR:
             resultDICT["appointmentClinic"] = args[1]
         pass
 
     if utterance == "[我]要約在[忠孝敦化]的診所":
-        if "診所" in inputSTR:
+        if "要約" in inputSTR:
             resultDICT["appointmentClinic"] = args[1]
         pass
 
+    if utterance == "[忠孝敦化][可以]嗎":
+        resultDICT["appointmentClinic"] = args[0]        
+        pass
+
+    if utterance == "[忠孝敦化]門診":
+        if "門診" in inputSTR:
+            resultDICT["appointmentClinic"] = args[0]     
+        pass
+
+    if utterance == "[忠孝敦化]門診[可以]嗎":
+        if "門診" in inputSTR:
+            resultDICT["appointmentClinic"] = args[0]  
+        pass
+
+    if utterance == "[忠孝敦化]門診比較方便":
+        if "門診" in inputSTR:
+            resultDICT["appointmentClinic"] = args[0]  
+        pass
+
+    if utterance == "[我]想預約[忠孝敦化]門診":
+        if "預約" in inputSTR:
+            resultDICT["appointmentClinic"] = args[1]
+        pass
+
+    if utterance == "[我]要[忠孝敦化]門診":
+        if "要" in inputSTR:
+            resultDICT["appointmentClinic"] = args[1]
+        pass
+
+    if utterance == "[我]要約在[忠孝敦化]的門診":
+        if "要約" in inputSTR:
+            resultDICT["appointmentClinic"] = args[1]        
+        pass
+    
     return resultDICT

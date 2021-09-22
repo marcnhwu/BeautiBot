@@ -23,6 +23,18 @@ with open("account.info.py", encoding="utf-8") as f:
     accountDICT = json.loads(f.read())
 articut = Articut(username = accountDICT["username"], apikey = accountDICT["articut_api_key"])
 
+def timeSTRConvert(inputSTR):
+    resultDICT = {}
+    resultDICT = articut.parse(inputSTR, level="lv3")
+    return resultDICT
+
+def getPersonSTR(inputSTR):
+    resultDICT = {}
+    resultDICT = articut.parse(inputSTR, level="lv3")
+    personSTR = resultDICT["person"][0][0][2]
+    return personSTR
+
+
 # 將符合句型的參數列表印出。這是 debug 或是開發用的。
 def debugInfo(inputSTR, utterance):
     if DEBUG_appointmentDoctor:
@@ -31,113 +43,129 @@ def debugInfo(inputSTR, utterance):
 def getResult(inputSTR, utterance, args, resultDICT):
     debugInfo(inputSTR, utterance)
     if utterance == "[我]想約[程昭瑞]":
-        lv3resultDICT = articut.parse(inputSTR, level="lv3")
-        resultDICT['appointmentDoctor'] = lv3resultDICT["person"][0][0][2]
-        pass
-
-    if utterance == "[我]想約[程昭瑞][醫師]":
-        if "醫師" in inputSTR:
-            lv3resultDICT = articut.parse(inputSTR, level="lv3")
-            resultDICT['appointmentDoctor'] = lv3resultDICT["person"][0][0][2]
+        resultDICT['appointmentDoctor'] = getPersonSTR(inputSTR)
         pass
 
     if utterance == "[我]想要[程昭瑞]":
-        lv3resultDICT = articut.parse(inputSTR, level="lv3")
-        resultDICT['appointmentDoctor'] = lv3resultDICT["person"][0][0][2]
+        #lv3resultDICT = articut.parse(inputSTR, level="lv3")
+        #resultDICT['appointmentDoctor'] = lv3resultDICT["person"][0][0][2]
+        resultDICT['appointmentDoctor'] = args[1]
         pass
-
-    if utterance == "[我]想要[程昭瑞][醫師]":
-        if "醫師" in inputSTR:
-            lv3resultDICT = articut.parse(inputSTR, level="lv3")
-            resultDICT['appointmentDoctor'] = lv3resultDICT["person"][0][0][2]
-        pass
-
+    
     if utterance == "[我]想要約[程昭瑞]":
-        lv3resultDICT = articut.parse(inputSTR, level="lv3")
-        resultDICT['appointmentDoctor'] = lv3resultDICT["person"][0][0][2]
-        pass
-
-    if utterance == "[我]想要約[程昭瑞][醫師]":
-        if "醫師" in inputSTR:
-            lv3resultDICT = articut.parse(inputSTR, level="lv3")
-            resultDICT['appointmentDoctor'] = lv3resultDICT["person"][0][0][2]
+        resultDICT['appointmentDoctor'] = args[1]
         pass
 
     if utterance == "[我]想預約[程昭瑞]":
-        lv3resultDICT = articut.parse(inputSTR, level="lv3")
-        resultDICT['appointmentDoctor'] = lv3resultDICT["person"][0][0][2]
-        pass
-
-    if utterance == "[我]想預約[程昭瑞][醫師]":
-        if "醫師" in inputSTR:
-            lv3resultDICT = articut.parse(inputSTR, level="lv3")
-            resultDICT['appointmentDoctor'] = lv3resultDICT["person"][0][0][2]
+        resultDICT['appointmentDoctor'] = getPersonSTR(inputSTR)
         pass
 
     if utterance == "[我]要[程昭瑞]":
-        lv3resultDICT = articut.parse(inputSTR, level="lv3")
-        resultDICT['appointmentDoctor'] = lv3resultDICT["person"][0][0][2]
-        pass
-
-    if utterance == "[我]要[程昭瑞][醫師]":
-        if "醫師" in inputSTR:
-            lv3resultDICT = articut.parse(inputSTR, level="lv3")
-            resultDICT['appointmentDoctor'] = lv3resultDICT["person"][0][0][2]
+        resultDICT['appointmentDoctor'] = getPersonSTR(inputSTR)
         pass
 
     if utterance == "[我]要約[程昭瑞]":
-        lv3resultDICT = articut.parse(inputSTR, level="lv3")
-        resultDICT['appointmentDoctor'] = lv3resultDICT["person"][0][0][2]
+        resultDICT['appointmentDoctor'] = getPersonSTR(inputSTR)
         pass
-
-    if utterance == "[我]要約[程昭瑞][醫師]":
-        if "醫師" in inputSTR:
-            lv3resultDICT = articut.parse(inputSTR, level="lv3")
-            resultDICT['appointmentDoctor'] = lv3resultDICT["person"][0][0][2]
-        pass
-
+    
     if utterance == "[我]要預約[程昭瑞]":
-        lv3resultDICT = articut.parse(inputSTR, level="lv3")
-        resultDICT['appointmentDoctor'] = lv3resultDICT["person"][0][0][2]
-        pass
-
-    if utterance == "[我]要預約[程昭瑞][醫師]":
-        if "醫師" in inputSTR:
-            lv3resultDICT = articut.parse(inputSTR, level="lv3")
-            resultDICT['appointmentDoctor'] = lv3resultDICT["person"][0][0][2]
-        pass
-
-    if utterance == "[星期一][程昭瑞][醫師]有看診嗎":
-        if "醫師" in inputSTR:
-            lv3resultDICT = articut.parse(inputSTR, level="lv3")
-            resultDICT['appointmentDoctor'] = lv3resultDICT["person"][0][0][2]
+        resultDICT['appointmentDoctor'] = getPersonSTR(inputSTR)
         pass
 
     if utterance == "[星期一][程昭瑞]有看診嗎":
-        lv3resultDICT = articut.parse(inputSTR, level="lv3")
-        resultDICT['appointmentDoctor'] = lv3resultDICT["person"][0][0][2]
+        if "看診" in inputSTR:
+            resultDICT['appointmentDoctor'] = getPersonSTR(inputSTR)
+            
+            datetime = timeSTRConvert(args[0])["time"]
+            #先處理中文日期
+            if datetime[0][0]["time_span"]["weekday"][0] == 7:
+                resultDICT['appointmentDay'] = False
+            else:
+                weekday = datetime[0][0]["datetime"][-19:-9]
+                resultDICT['appointmentDay'] = weekday  
         pass
 
     if utterance == "[程昭瑞][星期一]有看診嗎":
-        lv3resultDICT = articut.parse(inputSTR, level="lv3")
-        resultDICT['appointmentDoctor'] = lv3resultDICT["person"][0][0][2]
-        pass
-
-    if utterance == "[程昭瑞][醫師][星期一]有看診嗎":
-        if "醫師" in inputSTR:
-            lv3resultDICT = articut.parse(inputSTR, level="lv3")
-            resultDICT['appointmentDoctor'] = lv3resultDICT["person"][0][0][2]
+        if "看診" in inputSTR:
+            resultDICT['appointmentDoctor'] = getPersonSTR(inputSTR)
+            
+            datetime = timeSTRConvert(args[1])["time"]
+            #先處理中文日期
+            if datetime[0][0]["time_span"]["weekday"][0] == 7:
+                resultDICT['appointmentDay'] = False
+            else:
+                weekday = datetime[0][0]["datetime"][-19:-9]
+                resultDICT['appointmentDay'] = weekday  
         pass
 
     if utterance == "程昭瑞":
-        lv3resultDICT = articut.parse(inputSTR, level="lv3")
-        resultDICT['appointmentDoctor'] = lv3resultDICT["person"][0][0][2]
+        resultDICT['appointmentDoctor'] = getPersonSTR(inputSTR)
         pass
 
-    if utterance == "程昭瑞[醫師]":
+    if utterance == "[我]想約[程昭瑞]醫師":
         if "醫師" in inputSTR:
-            lv3resultDICT = articut.parse(inputSTR, level="lv3")
-            resultDICT['appointmentDoctor'] = lv3resultDICT["person"][0][0][2]
+            resultDICT['appointmentDoctor'] = getPersonSTR(inputSTR)
         pass
 
+    if utterance == "[我]想要[程昭瑞]醫師":
+        if "醫師" in inputSTR:
+            resultDICT['appointmentDoctor'] = getPersonSTR(inputSTR)
+        pass
+
+    if utterance == "[我]想要約[程昭瑞]醫師":
+        if "醫師" in inputSTR:
+            resultDICT['appointmentDoctor'] = getPersonSTR(inputSTR)
+        pass
+
+    if utterance == "[我]想預約[程昭瑞]醫師":
+        if "醫師" in inputSTR:
+            resultDICT['appointmentDoctor'] = getPersonSTR(inputSTR)
+        pass
+
+    if utterance == "[我]要[程昭瑞]醫師":
+        if "醫師" in inputSTR:
+            resultDICT['appointmentDoctor'] = getPersonSTR(inputSTR)
+        pass
+
+    if utterance == "[我]要約[程昭瑞]醫師":
+        if "醫師" in inputSTR:
+            resultDICT['appointmentDoctor'] = getPersonSTR(inputSTR)
+        pass
+
+    if utterance == "[我]要預約[程昭瑞]醫師":
+        if "醫師" in inputSTR:
+            resultDICT['appointmentDoctor'] = getPersonSTR(inputSTR)
+        pass
+
+    if utterance == "[星期一][程昭瑞]醫師有看診嗎":
+        if "看診" in inputSTR:
+            resultDICT['appointmentDoctor'] = getPersonSTR(inputSTR)
+            
+            datetime = timeSTRConvert(args[0])["time"]
+            #先處理中文日期
+            if datetime[0][0]["time_span"]["weekday"][0] == 7:
+                resultDICT['appointmentDay'] = False
+            else:
+                weekday = datetime[0][0]["datetime"][-19:-9]
+                resultDICT['appointmentDay'] = weekday  
+        pass
+
+    if utterance == "[程昭瑞]醫師[星期一]有看診嗎":
+        if "看診" in inputSTR:
+            resultDICT['appointmentDoctor'] = getPersonSTR(inputSTR)
+            
+            datetime = timeSTRConvert(args[1])["time"]
+            #先處理中文日期
+            if datetime[0][0]["time_span"]["weekday"][0] == 7:
+                resultDICT['appointmentDay'] = False
+            else:
+                weekday = datetime[0][0]["datetime"][-19:-9]
+                resultDICT['appointmentDay'] = weekday  
+        pass
+
+    if utterance == "程昭瑞醫師":
+        if "醫師" in inputSTR:
+            resultDICT['appointmentDoctor'] = getPersonSTR(inputSTR)
+        pass
+    
     return resultDICT
