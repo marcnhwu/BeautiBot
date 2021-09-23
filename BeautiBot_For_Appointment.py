@@ -93,7 +93,7 @@ async def on_message(message):
                 # 先處理「簡答題」
                     #改預約時間、診所、醫師
                     if mscDICT[client.user.id]["appointmentQuestionSTR"] == None:
-                        if msgSTR in ["對","正確","都正確","都正確喔"]:
+                        if "對" in msgSTR or "正確" in msgSTR:
                             QlokiResultDICT = beautiBot(msgSTR, [mscDICT[client.user.id]["confirm"]])
                             logging.info(QlokiResultDICT)    
                             #mscDICT[client.user.id]["confirm"] = True
@@ -141,10 +141,12 @@ async def on_message(message):
                                                      
                     #醫療史
                     elif mscDICT[client.user.id]["appointmentQuestionSTR"] == "medicalHistory":
-                        if msgSTR in ["沒","沒有","都沒有"]:
-                            mscDICT[client.user.id]["medicalHistory"] = False
-                        elif msgSTR in ["有"]:
+                        #if "沒有" in msgSTR:
+                            #mscDICT[client.user.id]["medicalHistory"] = False
+                        if any(e in msgSTR for e in ["沒有很","不會很","不算很","沒有太","不會太","不算太","沒有非常"]):
                             mscDICT[client.user.id]["medicalHistory"] = True
+                        elif "沒有" in msgSTR:
+                            mscDICT[client.user.id]["medicalHistory"] = False                        
                         else:
                             QlokiResultDICT = beautiBot(msgSTR, [mscDICT[client.user.id]["appointmentQuestionSTR"]])
                             logging.info(QlokiResultDICT) 
@@ -236,7 +238,7 @@ async def on_message(message):
                         
             # 將第一輪對話 Loki Intent 的結果，存進 Global mscDICT 變數，可替換成 Database。
             for k in lokiResultDICT.keys():
-                if k == "bodypart":
+                if k == "bodypart" and lokiResultDICT[k] != "":
                     mscDICT[client.user.id]["bodypart"] = lokiResultDICT["bodypart"]
                 if k == "request" and mscDICT[client.user.id][k] != True:
                     mscDICT[client.user.id]["request"] = lokiResultDICT["request"]
@@ -438,21 +440,21 @@ async def on_message(message):
                     mscDICT[client.user.id]["queryIntentSTR"] = "bodypart"
                     mscDICT[client.user.id]["bodyQuestionSTR"] = replySTR
                 else:
-                    replySTR = "不好意思，我們沒有提供這個部位的療程喔！再請你重新輸入需要的醫美服務～"
-                    mscDICT[client.user.id] = {"bodypart": None,
-                                               "request": "",
-                                               "confirm": "",
-                                               "queryIntentSTR": "",
-                                               "bodyQuestionSTR": "",
-                                               "appointmentQuestionSTR": "",
-                                               "appointmentClinic": "",
-                                               "appointmentDoctor": "",
-                                               "appointmentDay": "",
-                                               "appointmentTime": "",
-                                               "medicalHistory": "",
-                                               "updatetime": datetime.now(),
-                                               "finish": ""
-                                               }                    
+                    replySTR = "拍謝，我們沒有提供這個部位的療程喔！再請你重新輸入需要的醫美服務～"
+                    #mscDICT[client.user.id] = {"bodypart": None,
+                                               #"request": "",
+                                               #"confirm": "",
+                                               #"queryIntentSTR": "",
+                                               #"bodyQuestionSTR": "",
+                                               #"appointmentQuestionSTR": "",
+                                               #"appointmentClinic": "",
+                                               #"appointmentDoctor": "",
+                                               #"appointmentDay": "",
+                                               #"appointmentTime": "",
+                                               #"medicalHistory": "",
+                                               #"updatetime": datetime.now(),
+                                               #"finish": ""
+                                               #}                    
 
             elif mscDICT[client.user.id]["request"] == "" and mscDICT[client.user.id]["confirm"] == "":
                 if mscDICT[client.user.id]["bodypart"] == "":
