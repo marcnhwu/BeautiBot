@@ -255,7 +255,7 @@ async def on_message(message):
          
         else:
             #醫師
-            if msgSTR in ["都可以","都可以喔","我都可以","我都可"]:
+            if msgSTR in ["都可","都可以","都可以喔","我都可以","我都可"]:
                 mscDICT[client.user.id]["appointmentDoctor"] = "王經凱"
                 mscDICT[client.user.id]["appointmentClinic"] = "南西診所"
                 #print(mscDICT[client.user.id]["appointmentDoctor"])
@@ -294,7 +294,6 @@ async def on_message(message):
                                                    "updatetime": datetime.now(),
                                                    "finish": ""
                                                    }   
-                        
                 #確認療程後，詢問病史
                     elif mscDICT[client.user.id]["finish"] == "":
                         if mscDICT[client.user.id]["medicalHistory"] == "":
@@ -321,7 +320,7 @@ async def on_message(message):
                                 #mscDICT[client.user.id]["appointmentQuestionSTR"] = "medicalHistory" 
                             #確認沒有病史後，詢問醫師
                             elif mscDICT[client.user.id]["medicalHistory"] == False:
-                                replySTR = "OK~你要預約哪位醫師呢？\n請選擇【王經凱醫師｜程昭瑞醫師｜謝羽翔醫師｜薛博駿醫師｜陳棨揮醫師｜劉宇婷醫師】\n也可以回答【都可以】，由王經凱醫師看診。\n女性顧客可回答【女醫師】，由劉宇婷醫師看診"
+                                replySTR = "OK~你要預約哪位醫師呢？\n請選擇【王經凱醫師｜程昭瑞醫師｜謝羽翔醫師｜薛博駿醫師｜陳棨揮醫師｜劉宇婷醫師】\n也可以回答【都可以】，由王經凱醫師看診。\n女性顧客可以回答【女醫師】，由劉宇婷醫師看診"
                                 mscDICT[client.user.id]["appointmentQuestionSTR"] = "appointmentDoctor"
                                 #確認醫師後，詢問預約哪間診所
                                 if mscDICT[client.user.id]["appointmentDoctor"] != "":
@@ -398,8 +397,8 @@ async def on_message(message):
                                 replySTR = "".join(handleBodypartDICT[e])   # handleBodypartDICT 回傳的value是一個LIST，因此用join()把它變成STR
                                 mscDICT[client.user.id]["queryIntentSTR"] = "bodypart" 
                                 mscDICT[client.user.id]["bodyQuestionSTR"] = replySTR
-                        else:
-                            pass
+                            else:
+                                pass                              
 
             elif mscDICT[client.user.id]["request"] == "" and mscDICT[client.user.id]["bodypart"] != "":           # input == "我腿毛好長"
                 if mscDICT[client.user.id]["confirm"] == "" and mscDICT[client.user.id]["bodyQuestionSTR"] == "":  
@@ -438,27 +437,56 @@ async def on_message(message):
                     replySTR = "請問想除毛嗎？想處理哪個部位呢？"
                     mscDICT[client.user.id]["queryIntentSTR"] = "bodypart"
                     mscDICT[client.user.id]["bodyQuestionSTR"] = replySTR
-                else: 
-                    replySTR = "請問想處理哪個部位呢？"
-                    mscDICT[client.user.id]["queryIntentSTR"] = "bodypart"
-                    mscDICT[client.user.id]["bodyQuestionSTR"] = replySTR
+                else:
+                    replySTR = "不好意思，我們沒有提供這個部位的療程喔！再請你重新輸入需要的醫美服務～"
+                    mscDICT[client.user.id] = {"bodypart": None,
+                                               "request": "",
+                                               "confirm": "",
+                                               "queryIntentSTR": "",
+                                               "bodyQuestionSTR": "",
+                                               "appointmentQuestionSTR": "",
+                                               "appointmentClinic": "",
+                                               "appointmentDoctor": "",
+                                               "appointmentDay": "",
+                                               "appointmentTime": "",
+                                               "medicalHistory": "",
+                                               "updatetime": datetime.now(),
+                                               "finish": ""
+                                               }                    
 
-            elif mscDICT[client.user.id]["request"] == "" and mscDICT[client.user.id]["bodypart"] == None and mscDICT[client.user.id]["confirm"] == "":
-                replySTR = "我只能回答醫美相關問題喔～請重新輸入你的需求～\n可以跟我說「我想除毛」或是「我想預約星期一下午ＯＯＯ醫師的除毛門診」喔！"
-                mscDICT[client.user.id] = {"bodypart": None,
-                                           "request": "",
-                                           "confirm": "",
-                                           "queryIntentSTR": "",
-                                           "bodyQuestionSTR": "",
-                                           "appointmentQuestionSTR": "",
-                                           "appointmentClinic": "",
-                                           "appointmentDoctor": "",
-                                           "appointmentDay": "",
-                                           "appointmentTime": "",
-                                           "medicalHistory": "",
-                                           "updatetime": datetime.now(),
-                                           "finish": ""
-                                           }             
+            elif mscDICT[client.user.id]["request"] == "" and mscDICT[client.user.id]["confirm"] == "":
+                if mscDICT[client.user.id]["bodypart"] == "":
+                    replySTR = "不好意思，我們沒有提供這個部位的療程喔！再請你重新輸入需要的醫美服務～"
+                    mscDICT[client.user.id] = {"bodypart": None,
+                                               "request": "",
+                                               "confirm": "",
+                                               "queryIntentSTR": "",
+                                               "bodyQuestionSTR": "",
+                                               "appointmentQuestionSTR": "",
+                                               "appointmentClinic": "",
+                                               "appointmentDoctor": "",
+                                               "appointmentDay": "",
+                                               "appointmentTime": "",
+                                               "medicalHistory": "",
+                                               "updatetime": datetime.now(),
+                                               "finish": ""
+                                               }                   
+                elif mscDICT[client.user.id]["bodypart"] == None:
+                    replySTR = "我只能回答醫美相關問題喔～請重新輸入你的需求～\n可以跟我說「我想除毛」或是「我想預約星期一下午ＯＯＯ醫師的除毛門診」喔！"
+                    mscDICT[client.user.id] = {"bodypart": None,
+                                               "request": "",
+                                               "confirm": "",
+                                               "queryIntentSTR": "",
+                                               "bodyQuestionSTR": "",
+                                               "appointmentQuestionSTR": "",
+                                               "appointmentClinic": "",
+                                               "appointmentDoctor": "",
+                                               "appointmentDay": "",
+                                               "appointmentTime": "",
+                                               "medicalHistory": "",
+                                               "updatetime": datetime.now(),
+                                               "finish": ""
+                                               }             
                 
         else:       
             replySTR = "我只能回答醫美相關問題喔～有沒有相關問題想問我呀？\n可以跟我說「我想除毛」或是「我想預約星期一下午ＯＯＯ醫師的除毛門診」喔！"
