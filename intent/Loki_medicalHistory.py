@@ -26,39 +26,42 @@ def getResult(inputSTR, utterance, args, resultDICT):
     debugInfo(inputSTR, utterance)
     if utterance == "[我]對[抗生素]過敏":
         if args[1] not in userDefinedDICT["medicalCondition"]:
-            pass
+            resultDICT["medicalHistory"] = False
         else:
             resultDICT["medicalHistory"] = args[1]
         pass
 
     if utterance == "[我]有[癲癇]":
         if args[1] not in userDefinedDICT["medicalCondition"]:
-            pass
+            resultDICT["medicalHistory"] = False
         else:
             resultDICT["medicalHistory"] = args[1]
         pass
 
     if utterance == "我[哺乳中]":
         if args[0] not in userDefinedDICT["medicalCondition"]:
-            pass
+            resultDICT["medicalHistory"] = False
         else:
             resultDICT["medicalHistory"] = args[0]        
         pass
 
     if utterance == "[我][剛好][懷孕]":
         if args[2] not in userDefinedDICT["medicalCondition"]:
-            pass
+            resultDICT["medicalHistory"] = False
         else:
             resultDICT["medicalHistory"] = args[2]          
         pass
 
     if utterance == "[我]有[糖尿病]史":
-        resultDICT["medicalHistory"] = args[1]
+        if args[1] not in userDefinedDICT["medicalCondition"]:
+            resultDICT["medicalHistory"] = False
+        else:
+            resultDICT["medicalHistory"] = args[1]
         pass
 
     if utterance == "[癲癇]":
         if args[0] not in userDefinedDICT["medicalCondition"]:
-            pass
+            resultDICT["medicalHistory"] = False
         else:
             resultDICT["medicalHistory"] = args[0]
         pass

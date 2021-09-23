@@ -201,7 +201,7 @@ def getResult(inputSTR, utterance, args, resultDICT):
             resultDICT['appointmentDoctor'] = getPersonSTR(inputSTR)
         pass
 
-    if utterance == "[我]想改[程昭瑞]醫生":
+    if utterance == "[我]想改[程昭瑞]醫師":
         if "改" in inputSTR:
             if "醫生" in inputSTR or "醫師" in inputSTR:
                 resultDICT['appointmentDoctor'] = getPersonSTR(inputSTR)
