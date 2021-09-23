@@ -39,11 +39,11 @@ $ pip install ArticutAPI
 ```
 * [Articut官方說明文件](https://api.droidtown.co/document/#Articut)
 
-2. [discord]("https://pypi.org/project/discord.py/")
+2. [discord](https://pypi.org/project/discord.py/)
 ```shell=
 $ pip install discord.py
 ```
-3. [DateTime]("https://pypi.org/project/DateTime/")
+3. [DateTime](https://pypi.org/project/DateTime/)
 ```shell=
 $ pip install DateTime
 ```
