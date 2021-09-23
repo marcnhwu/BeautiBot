@@ -15,7 +15,7 @@
 """
 
 DEBUG_appointmentTime = True
-userDefinedDICT = {"bodypart": ["毛", "腋", "腋下", "腿", "小腿", "大腿", "膝蓋", "腳", "腳趾", "腳背", "比基尼線", "私密處", "手", "手臂", "上手臂", "下手臂", "全手", "手指", "手背", "臉", "全臉", "鬍子", "眉心", "唇周", "下巴", "頸", "前頸", "後頸", "胸", "胸部", "腹", "腹部", "子母線", "背", "上背", "下背", "臀", "臀部", "乳暈", "胳肢窩"], "location": ["忠孝敦化", "中山"], "medicalCondition": ["藥物過敏", "凝血功能障礙", "蟹足腫", "免疫疾病", "糖尿病", "癲癇", "懷孕", "哺乳中", "抗生素"]}
+userDefinedDICT = {"bodypart": ["毛", "腋", "腋下", "腿", "小腿", "大腿", "膝蓋", "腳", "腳趾", "腳背", "比基尼線", "私密處", "手", "手臂", "上手臂", "下手臂", "全手", "手指", "手背", "臉", "全臉", "鬍子", "眉心", "唇周", "下巴", "頸", "前頸", "後頸", "胸", "胸部", "腹", "腹部", "子母線", "背", "上背", "下背", "臀", "臀部", "乳暈", "胳肢窩"], "location": ["忠孝敦化", "南西"], "medicalCondition": ["藥物過敏", "凝血功能障礙", "蟹足腫", "免疫疾病", "糖尿病", "癲癇", "懷孕", "哺乳中", "抗生素"]}
 
 import re
 import json
@@ -188,5 +188,190 @@ def getResult(inputSTR, utterance, args, resultDICT):
         else:
             resultDICT ['appointmentTime'] = False
         pass
-                
+
+
+    if utterance == "[我]想預約[星期一下午四點]做除毛":
+        resultDICT["bodypart"] = ""
+        resultDICT["request"] = True  
+        
+        datetime = timeSTRConvert(args[1])["time"]
+        #先處理中文日期
+        if datetime[0][0]["time_span"]["weekday"][0] == 7:
+            resultDICT['appointmentDay'] = False
+        else:
+            weekday = datetime[0][0]["datetime"][-19:-9]
+            resultDICT['appointmentDay'] = weekday
+        #再判斷時間是否在營業時間內
+        hour = int(datetime[0][0]["datetime"][-8:-6])
+        minute = int(datetime[0][0]["datetime"][-5:-3])
+        if time_check(hour, minute):
+            resultDICT ['appointmentTime'] = datetime[0][0]["datetime"][-8:-3]
+        else:
+            resultDICT ['appointmentTime'] = False
+        pass
+
+
+    if utterance == "[我]想預約[星期一下午四點]的時段做除毛":
+        resultDICT["bodypart"] = ""
+        resultDICT["request"] = True  
+        
+        datetime = timeSTRConvert(args[1])["time"]
+        #先處理中文日期
+        if datetime[0][0]["time_span"]["weekday"][0] == 7:
+            resultDICT['appointmentDay'] = False
+        else:
+            weekday = datetime[0][0]["datetime"][-19:-9]
+            resultDICT['appointmentDay'] = weekday
+        #再判斷時間是否在營業時間內
+        hour = int(datetime[0][0]["datetime"][-8:-6])
+        minute = int(datetime[0][0]["datetime"][-5:-3])
+        if time_check(hour, minute):
+            resultDICT ['appointmentTime'] = datetime[0][0]["datetime"][-8:-3]
+        else:
+            resultDICT ['appointmentTime'] = False
+        pass
+    
+
+    if utterance == "[我]想預約[星期一下午四點]的時段的除毛":
+        resultDICT["bodypart"] = ""
+        resultDICT["request"] = True  
+        
+        datetime = timeSTRConvert(args[1])["time"]
+        #先處理中文日期
+        if datetime[0][0]["time_span"]["weekday"][0] == 7:
+            resultDICT['appointmentDay'] = False
+        else:
+            weekday = datetime[0][0]["datetime"][-19:-9]
+            resultDICT['appointmentDay'] = weekday
+        #再判斷時間是否在營業時間內
+        hour = int(datetime[0][0]["datetime"][-8:-6])
+        minute = int(datetime[0][0]["datetime"][-5:-3])
+        if time_check(hour, minute):
+            resultDICT ['appointmentTime'] = datetime[0][0]["datetime"][-8:-3]
+        else:
+            resultDICT ['appointmentTime'] = False
+        pass
+    
+
+    if utterance == "[我]想預約[星期一下午四點]的除毛門診":
+        resultDICT["bodypart"] = ""
+        resultDICT["request"] = True  
+        
+        datetime = timeSTRConvert(args[1])["time"]
+        #先處理中文日期
+        if datetime[0][0]["time_span"]["weekday"][0] == 7:
+            resultDICT['appointmentDay'] = False
+        else:
+            weekday = datetime[0][0]["datetime"][-19:-9]
+            resultDICT['appointmentDay'] = weekday
+        #再判斷時間是否在營業時間內
+        hour = int(datetime[0][0]["datetime"][-8:-6])
+        minute = int(datetime[0][0]["datetime"][-5:-3])
+        if time_check(hour, minute):
+            resultDICT ['appointmentTime'] = datetime[0][0]["datetime"][-8:-3]
+        else:
+            resultDICT ['appointmentTime'] = False
+        pass
+    
+
+    if utterance == "[我]想預約[星期一下午四點]除毛":
+        resultDICT["bodypart"] = ""
+        resultDICT["request"] = True  
+        
+        datetime = timeSTRConvert(args[1])["time"]
+        #先處理中文日期
+        if datetime[0][0]["time_span"]["weekday"][0] == 7:
+            resultDICT['appointmentDay'] = False
+        else:
+            weekday = datetime[0][0]["datetime"][-19:-9]
+            resultDICT['appointmentDay'] = weekday
+        #再判斷時間是否在營業時間內
+        hour = int(datetime[0][0]["datetime"][-8:-6])
+        minute = int(datetime[0][0]["datetime"][-5:-3])
+        if time_check(hour, minute):
+            resultDICT ['appointmentTime'] = datetime[0][0]["datetime"][-8:-3]
+        else:
+            resultDICT ['appointmentTime'] = False
+        pass
+    
+    
+    if utterance == "[我]想預約[星期一下午四點]的時段的除毛療程":
+        resultDICT["bodypart"] = ""
+        resultDICT["request"] = True  
+        
+        datetime = timeSTRConvert(args[1])["time"]
+        #先處理中文日期
+        if datetime[0][0]["time_span"]["weekday"][0] == 7:
+            resultDICT['appointmentDay'] = False
+        else:
+            weekday = datetime[0][0]["datetime"][-19:-9]
+            resultDICT['appointmentDay'] = weekday
+        #再判斷時間是否在營業時間內
+        hour = int(datetime[0][0]["datetime"][-8:-6])
+        minute = int(datetime[0][0]["datetime"][-5:-3])
+        if time_check(hour, minute):
+            resultDICT ['appointmentTime'] = datetime[0][0]["datetime"][-8:-3]
+        else:
+            resultDICT ['appointmentTime'] = False
+        pass
+
+    if utterance == "[我]想預約[星期一下午四點]的除毛療程":
+        resultDICT["bodypart"] = ""
+        resultDICT["request"] = True  
+        
+        datetime = timeSTRConvert(args[1])["time"]
+        #先處理中文日期
+        if datetime[0][0]["time_span"]["weekday"][0] == 7:
+            resultDICT['appointmentDay'] = False
+        else:
+            weekday = datetime[0][0]["datetime"][-19:-9]
+            resultDICT['appointmentDay'] = weekday
+        #再判斷時間是否在營業時間內
+        hour = int(datetime[0][0]["datetime"][-8:-6])
+        minute = int(datetime[0][0]["datetime"][-5:-3])
+        if time_check(hour, minute):
+            resultDICT ['appointmentTime'] = datetime[0][0]["datetime"][-8:-3]
+        else:
+            resultDICT ['appointmentTime'] = False
+        pass  
+    
+    if utterance == "[我]想改[星期一][16]:[00]":
+        if "改" in inputSTR:
+            datetime = timeSTRConvert(args[1])["time"]
+            #先處理中文日期
+            if datetime[0][0]["time_span"]["weekday"][0] == 7:
+                resultDICT['appointmentDay'] = False
+            else:
+                weekday = datetime[0][0]["datetime"][-19:-9]
+                resultDICT['appointmentDay'] = weekday
+            #再處理數字時間
+            timeLIST = re.findall(r'[0-9]+:[0-9]+', inputSTR)
+            timeSTR = "".join(timeLIST) #16:00
+            #判斷時間是否在營業時間內 
+            hour = int(timeSTR.split(":")[0])
+            minute = int(timeSTR.split(":")[1])
+            if time_check(hour, minute):
+                resultDICT ['appointmentTime'] = timeSTR
+            else:
+                resultDICT ['appointmentTime'] = False  
+        pass           
+
+    if utterance == "[我]想改[星期一下午四點]":
+        if "改" in inputSTR:
+            datetime = timeSTRConvert(args[1])["time"]
+            #先處理中文日期
+            if datetime[0][0]["time_span"]["weekday"][0] == 7:
+                resultDICT['appointmentDay'] = False
+            else:
+                weekday = datetime[0][0]["datetime"][-19:-9]
+                resultDICT['appointmentDay'] = weekday
+            #再判斷時間是否在營業時間內
+            hour = int(datetime[0][0]["datetime"][-8:-6])
+            minute = int(datetime[0][0]["datetime"][-5:-3])
+            if time_check(hour, minute):
+                resultDICT ['appointmentTime'] = datetime[0][0]["datetime"][-8:-3]
+            else:
+                resultDICT ['appointmentTime'] = False
+        pass
+
     return resultDICT
