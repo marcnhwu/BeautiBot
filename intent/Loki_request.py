@@ -430,7 +430,7 @@ def getResult(inputSTR, utterance, args, resultDICT):
 
     if utterance == "[可以]除哪些部位":
         resultDICT["bodypart"] = ""
-        resultDICT["request"] = True 
+        resultDICT["request"] = "" 
         resultDICT["confirm"] = ""        
         pass
 
@@ -460,19 +460,19 @@ def getResult(inputSTR, utterance, args, resultDICT):
 
     if utterance == "有哪些部位[可以]除":
         resultDICT["bodypart"] = ""
-        resultDICT["request"] = True 
+        resultDICT["request"] = "" 
         resultDICT["confirm"] = ""
         pass
 
     if utterance == "請問[你們][只有]除毛[可以]預約嗎":
         resultDICT["bodypart"] = ""
-        resultDICT["request"] = True 
+        resultDICT["request"] = "" 
         resultDICT["confirm"] = ""
         pass
 
     if utterance == "請問[可以]除哪些部位":
         resultDICT["bodypart"] = ""
-        resultDICT["request"] = True 
+        resultDICT["request"] = "" 
         resultDICT["confirm"] = ""
         pass
 
@@ -484,7 +484,7 @@ def getResult(inputSTR, utterance, args, resultDICT):
 
     if utterance == "請問有哪些部位[可以]除":
         resultDICT["bodypart"] = ""
-        resultDICT["request"] = True 
+        resultDICT["request"] = "" 
         resultDICT["confirm"] = ""
         pass
 
